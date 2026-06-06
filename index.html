@@ -3,1211 +3,1030 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Art'Fan — Moteur Narratif</title>
-<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=DM+Mono:wght@400;500&family=Lora:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+<title>Art'Fan Studio</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
 :root {
-  --bg: #0A0A0C;
-  --bg2: #111114;
-  --bg3: #18181D;
-  --bg4: #202027;
-  --border: rgba(255,255,255,0.06);
-  --border2: rgba(255,255,255,0.11);
-  --text: #ECEAE0;
-  --text2: #8C8A7E;
-  --text3: #4C4A42;
-  --gold: #E8C84A;
-  --gold2: #C4A832;
-  --green: #3DCC8E;
-  --red: #E8604A;
-  --blue: #4A90E8;
-  --purple: #9B6EFA;
-  --r: 10px;
-  --rlg: 16px;
+  --bg: #F7F6F2;
+  --bg2: #FFFFFF;
+  --bg3: #F0EEE8;
+  --bg4: #E8E5DC;
+  --border: rgba(0,0,0,0.07);
+  --border2: rgba(0,0,0,0.13);
+  --text: #1A1917;
+  --text2: #6B6860;
+  --text3: #A8A69E;
+  --accent: #2D6A4F;
+  --accent2: #1B4332;
+  --accent-light: rgba(45,106,79,0.08);
+  --accent-light2: rgba(45,106,79,0.15);
+  --purple: #5A3E9B;
+  --purple-l: rgba(90,62,155,0.08);
+  --coral: #C44B2B;
+  --coral-l: rgba(196,75,43,0.08);
+  --teal: #1A7A5E;
+  --teal-l: rgba(26,122,94,0.08);
+  --amber: #B07320;
+  --amber-l: rgba(176,115,32,0.08);
+  --gold: #C49A28;
+  --radius: 10px;
+  --radius-lg: 16px;
+  --shadow: 0 1px 3px rgba(0,0,0,0.06), 0 4px 16px rgba(0,0,0,0.04);
+  --shadow-md: 0 2px 8px rgba(0,0,0,0.08), 0 8px 24px rgba(0,0,0,0.06);
 }
+
 * { box-sizing: border-box; margin: 0; padding: 0; }
 html { scroll-behavior: smooth; }
 
 body {
-  font-family: 'Lora', Georgia, serif;
+  font-family: 'DM Sans', sans-serif;
   background: var(--bg);
   color: var(--text);
   min-height: 100vh;
+  overflow-x: hidden;
 }
 
-/* NOISE TEXTURE */
-body::before {
-  content: '';
+/* SIDEBAR */
+.sidebar {
   position: fixed;
-  inset: 0;
-  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");
-  pointer-events: none;
-  z-index: 0;
-  opacity: 0.4;
+  left: 0; top: 0; bottom: 0;
+  width: 224px;
+  background: var(--bg2);
+  border-right: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
+  z-index: 100;
+  box-shadow: var(--shadow);
 }
 
-.app { position: relative; z-index: 1; max-width: 860px; margin: 0 auto; padding: 2rem 1.5rem 4rem; }
+.logo-area {
+  padding: 1.5rem 1.25rem 1.25rem;
+  border-bottom: 1px solid var(--border);
+}
 
-/* HEADER */
-.header {
-  text-align: center;
-  padding: 3rem 0 2.5rem;
-  position: relative;
-}
-.header::after {
-  content: '';
-  position: absolute;
-  bottom: 0; left: 50%; transform: translateX(-50%);
-  width: 60px; height: 1px;
-  background: var(--gold);
-  opacity: 0.4;
-}
 .logo {
   font-family: 'Syne', sans-serif;
-  font-size: 42px;
+  font-size: 22px;
   font-weight: 800;
-  letter-spacing: -2px;
+  letter-spacing: -0.5px;
   color: var(--text);
   line-height: 1;
 }
-.logo em { color: var(--gold); font-style: normal; }
+.logo em { color: var(--accent); font-style: normal; }
 .logo-sub {
   font-family: 'DM Mono', monospace;
-  font-size: 11px;
-  color: var(--text3);
-  letter-spacing: 0.2em;
-  text-transform: uppercase;
-  margin-top: 8px;
-}
-
-/* INPUT ZONE */
-.input-zone {
-  background: var(--bg2);
-  border: 1px solid var(--border);
-  border-radius: var(--rlg);
-  padding: 1.75rem;
-  margin: 2.5rem 0 1.5rem;
-  position: relative;
-  transition: border-color 0.3s;
-}
-.input-zone:focus-within { border-color: rgba(232,200,74,0.3); }
-
-.input-label {
-  font-family: 'DM Mono', monospace;
   font-size: 10px;
-  letter-spacing: 0.15em;
-  text-transform: uppercase;
   color: var(--text3);
-  margin-bottom: 10px;
-  display: block;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  margin-top: 5px;
 }
 
-.main-input {
-  width: 100%;
-  background: transparent;
-  border: none;
-  outline: none;
-  font-family: 'Lora', serif;
-  font-size: 18px;
-  color: var(--text);
-  line-height: 1.6;
-  resize: none;
-  min-height: 60px;
-}
-.main-input::placeholder { color: var(--text3); font-style: italic; }
+.nav { flex: 1; padding: 0.75rem 0.625rem; display: flex; flex-direction: column; gap: 2px; }
 
-.input-footer {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin-top: 1rem;
-  padding-top: 1rem;
-  border-top: 1px solid var(--border);
-  flex-wrap: wrap;
-  gap: 10px;
+.nav-item {
+  display: flex; align-items: center; gap: 10px;
+  padding: 9px 12px; border-radius: 8px;
+  font-size: 14px; font-weight: 400; color: var(--text2);
+  cursor: pointer; transition: all 0.15s;
+  border: none; background: none; width: 100%; text-align: left;
 }
-
-.lang-pills { display: flex; gap: 6px; flex-wrap: wrap; }
-.lang-pill {
-  padding: 5px 14px;
-  border-radius: 99px;
+.nav-item:hover { background: var(--bg3); color: var(--text); }
+.nav-item.active { background: var(--accent-light2); color: var(--accent); font-weight: 500; }
+.nav-item .icon { width: 17px; height: 17px; flex-shrink: 0; opacity: 0.6; }
+.nav-item.active .icon { opacity: 1; }
+.nav-badge {
+  margin-left: auto; background: var(--bg3); color: var(--text3);
+  font-size: 11px; padding: 1px 7px; border-radius: 99px; font-weight: 500;
   font-family: 'DM Mono', monospace;
-  font-size: 11px;
-  cursor: pointer;
-  border: 1px solid var(--border);
-  background: transparent;
-  color: var(--text2);
-  transition: all 0.18s;
+}
+.nav-item.active .nav-badge { background: var(--accent-light2); color: var(--accent); }
+
+.sidebar-footer {
+  padding: 0.75rem; border-top: 1px solid var(--border);
+}
+.version-badge {
+  display: flex; align-items: center; gap: 8px;
+  padding: 8px 10px; background: var(--bg3); border-radius: 8px;
+  font-size: 11px; color: var(--text3); font-family: 'DM Mono', monospace;
+}
+.version-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--accent); }
+
+/* MAIN */
+.main { margin-left: 224px; min-height: 100vh; display: flex; flex-direction: column; }
+
+.topbar {
+  height: 54px; border-bottom: 1px solid var(--border);
+  display: flex; align-items: center; padding: 0 1.75rem; gap: 12px;
+  background: var(--bg2); position: sticky; top: 0; z-index: 50;
+  box-shadow: 0 1px 0 var(--border);
+}
+.page-title { font-family: 'Syne', sans-serif; font-size: 15px; font-weight: 700; color: var(--text); }
+.topbar-right { margin-left: auto; display: flex; gap: 8px; align-items: center; }
+
+.content { flex: 1; padding: 1.75rem; max-width: 880px; }
+
+/* PAGES */
+.page { display: none; }
+.page.active { display: block; animation: fadeIn 0.2s ease; }
+@keyframes fadeIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
+
+/* CARDS */
+.card {
+  background: var(--bg2); border: 1px solid var(--border);
+  border-radius: var(--radius-lg); padding: 1.25rem 1.5rem;
+  margin-bottom: 1rem; box-shadow: var(--shadow);
+  transition: box-shadow 0.2s;
+}
+.card:hover { box-shadow: var(--shadow-md); }
+.card-title {
+  font-family: 'Syne', sans-serif; font-size: 14px; font-weight: 700;
+  color: var(--text); margin-bottom: 1rem;
+  display: flex; align-items: center; gap: 8px;
+}
+.card-icon {
+  width: 28px; height: 28px; border-radius: 7px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 14px; flex-shrink: 0;
+}
+
+/* INPUTS */
+label {
+  font-size: 11px; color: var(--text3); letter-spacing: 0.06em;
+  text-transform: uppercase; display: block;
+  margin-bottom: 5px; margin-top: 14px; font-family: 'DM Mono', monospace;
+}
+label:first-child { margin-top: 0; }
+input[type=text], textarea, select {
+  width: 100%; padding: 9px 12px;
+  background: var(--bg3); border: 1px solid var(--border);
+  border-radius: 8px; font-size: 14px; color: var(--text);
+  font-family: 'DM Sans', sans-serif; transition: all 0.15s; outline: none;
+}
+input[type=text]:focus, textarea:focus, select:focus {
+  border-color: var(--accent); background: var(--bg2);
+  box-shadow: 0 0 0 3px var(--accent-light);
+}
+textarea { resize: vertical; min-height: 80px; line-height: 1.6; }
+select { cursor: pointer; }
+
+/* BUTTONS */
+.btn {
+  padding: 9px 16px; border-radius: 8px; font-size: 14px; font-weight: 500;
+  font-family: 'DM Sans', sans-serif; cursor: pointer; border: none;
+  transition: all 0.15s; display: inline-flex; align-items: center; gap: 6px;
+}
+.btn-primary { background: var(--accent); color: white; }
+.btn-primary:hover { background: var(--accent2); }
+.btn-primary:disabled { background: var(--bg4); color: var(--text3); cursor: not-allowed; }
+.btn-ghost { background: var(--bg3); color: var(--text2); border: 1px solid var(--border); }
+.btn-ghost:hover { background: var(--bg4); color: var(--text); border-color: var(--border2); }
+.btn-sm { padding: 5px 12px; font-size: 12px; }
+
+/* GRID */
+.grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+.grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; }
+
+/* METRICS */
+.metric-card {
+  background: var(--bg2); border: 1px solid var(--border);
+  border-radius: var(--radius); padding: 1.25rem; position: relative;
+  overflow: hidden; box-shadow: var(--shadow); transition: all 0.2s;
+}
+.metric-card:hover { box-shadow: var(--shadow-md); transform: translateY(-1px); }
+.metric-card::before {
+  content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px;
+}
+.metric-card.green::before { background: var(--accent); }
+.metric-card.purple::before { background: var(--purple); }
+.metric-card.coral::before { background: var(--coral); }
+.metric-num {
+  font-family: 'Syne', sans-serif; font-size: 34px; font-weight: 800;
+  color: var(--text); line-height: 1; margin-bottom: 4px;
+}
+.metric-label { font-size: 13px; color: var(--text2); }
+
+/* TAGS */
+.tag {
+  display: inline-flex; align-items: center; padding: 3px 10px;
+  border-radius: 99px; font-size: 12px; font-weight: 500;
+}
+.tag-green { background: var(--teal-l); color: var(--teal); }
+.tag-purple { background: var(--purple-l); color: var(--purple); }
+.tag-amber { background: var(--amber-l); color: var(--amber); }
+.tag-coral { background: var(--coral-l); color: var(--coral); }
+.tag-accent { background: var(--accent-light2); color: var(--accent); }
+
+/* THEME TAGS */
+.theme-tags { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 6px; }
+.theme-tag {
+  padding: 5px 13px; border-radius: 99px; font-size: 13px; cursor: pointer;
+  border: 1px solid var(--border); background: var(--bg3); color: var(--text2);
+  transition: all 0.15s;
+}
+.theme-tag:hover { border-color: var(--border2); color: var(--text); }
+.theme-tag.on { background: var(--accent-light2); color: var(--accent); border-color: rgba(45,106,79,0.3); }
+
+/* CHARACTER CARDS */
+.char-card {
+  background: var(--bg3); border: 1px solid var(--border); border-radius: var(--radius);
+  padding: 1rem; display: flex; gap: 12px; margin-bottom: 8px; transition: all 0.15s;
+}
+.char-card:hover { border-color: var(--border2); background: var(--bg4); }
+.avatar {
+  width: 42px; height: 42px; border-radius: 50%;
+  background: linear-gradient(135deg, var(--purple), #8B6EDD);
+  display: flex; align-items: center; justify-content: center;
+  font-family: 'Syne', sans-serif; font-size: 17px; font-weight: 800;
+  color: white; flex-shrink: 0;
+}
+
+/* SCENE BLOCKS */
+.scene-block {
+  background: var(--bg3); border-radius: 8px; padding: 12px 14px;
+  margin-bottom: 8px; border-left: 3px solid transparent;
+}
+.scene-block.s1 { border-left-color: var(--purple); }
+.scene-block.s2 { border-left-color: var(--coral); }
+.scene-block.s3 { border-left-color: var(--teal); }
+.scene-num { font-size: 11px; color: var(--text3); font-family: 'DM Mono', monospace; text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 6px; }
+
+/* WELCOME */
+.welcome {
+  background: linear-gradient(135deg, rgba(45,106,79,0.06), rgba(90,62,155,0.04));
+  border: 1px solid rgba(45,106,79,0.15); border-radius: var(--radius-lg);
+  padding: 1.75rem; margin-bottom: 1.5rem; position: relative; overflow: hidden;
+}
+.welcome h1 { font-family: 'Syne', sans-serif; font-size: 21px; font-weight: 800; color: var(--text); margin-bottom: 6px; }
+.welcome h1 em { color: var(--accent); font-style: normal; }
+.welcome p { font-size: 14px; color: var(--text2); max-width: 480px; line-height: 1.65; }
+
+/* DIVIDER */
+.divider { height: 1px; background: var(--border); margin: 1rem 0; }
+.mt-1 { margin-top: 0.5rem; }
+.mt-2 { margin-top: 1rem; }
+.flex { display: flex; }
+.flex-between { display: flex; justify-content: space-between; align-items: center; }
+.gap-2 { gap: 8px; }
+
+/* EMPTY */
+.empty { text-align: center; padding: 2rem 1rem; color: var(--text3); font-size: 14px; }
+.empty-icon { font-size: 32px; margin-bottom: 8px; opacity: 0.35; }
+
+/* ===== MOTEUR NARRATIF ===== */
+.engine-input-zone {
+  background: var(--bg2); border: 1.5px solid var(--border);
+  border-radius: var(--radius-lg); padding: 1.5rem;
+  margin-bottom: 1rem; transition: all 0.2s; box-shadow: var(--shadow);
+}
+.engine-input-zone:focus-within {
+  border-color: rgba(45,106,79,0.35);
+  box-shadow: 0 0 0 4px var(--accent-light), var(--shadow-md);
+}
+.engine-label {
+  font-family: 'DM Mono', monospace; font-size: 10px;
+  letter-spacing: 0.14em; text-transform: uppercase; color: var(--text3); margin-bottom: 10px; display: block;
+}
+.engine-input {
+  width: 100%; background: transparent; border: none; outline: none;
+  font-family: 'DM Sans', sans-serif; font-size: 16px; color: var(--text);
+  line-height: 1.6; resize: none; min-height: 52px;
+}
+.engine-input::placeholder { color: var(--text3); font-style: italic; }
+.engine-footer {
+  display: flex; align-items: center; justify-content: space-between;
+  margin-top: 1rem; padding-top: 1rem; border-top: 1px solid var(--border);
+  flex-wrap: wrap; gap: 10px;
+}
+.lang-pills { display: flex; gap: 5px; flex-wrap: wrap; }
+.lang-pill {
+  padding: 5px 13px; border-radius: 99px;
+  font-family: 'DM Mono', monospace; font-size: 11px; cursor: pointer;
+  border: 1px solid var(--border); background: var(--bg3); color: var(--text2); transition: all 0.15s;
 }
 .lang-pill:hover { border-color: var(--border2); color: var(--text); }
-.lang-pill.on { background: rgba(232,200,74,0.12); color: var(--gold); border-color: rgba(232,200,74,0.3); }
+.lang-pill.on { background: var(--accent-light2); color: var(--accent); border-color: rgba(45,106,79,0.3); }
 
-.gen-btn {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  padding: 10px 22px;
-  background: var(--gold);
-  color: #0A0A0C;
-  border: none;
-  border-radius: 8px;
-  font-family: 'Syne', sans-serif;
-  font-size: 14px;
-  font-weight: 700;
-  cursor: pointer;
-  transition: all 0.2s;
-  letter-spacing: 0.02em;
-}
-.gen-btn:hover { background: var(--gold2); transform: translateY(-1px); box-shadow: 0 8px 24px rgba(232,200,74,0.2); }
-.gen-btn:disabled { background: var(--bg4); color: var(--text3); cursor: not-allowed; transform: none; box-shadow: none; }
-
-/* EXAMPLES */
-.examples {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
-  margin-bottom: 2rem;
-}
+.examples-row { display: flex; flex-wrap: wrap; gap: 7px; margin-bottom: 1.25rem; }
 .ex-chip {
-  padding: 6px 14px;
-  background: var(--bg2);
-  border: 1px solid var(--border);
-  border-radius: 99px;
-  font-size: 13px;
-  color: var(--text2);
-  cursor: pointer;
-  transition: all 0.18s;
-  font-family: 'Lora', serif;
-  font-style: italic;
+  padding: 6px 13px; background: var(--bg2); border: 1px solid var(--border);
+  border-radius: 99px; font-size: 13px; color: var(--text2); cursor: pointer;
+  transition: all 0.15s; font-style: italic;
 }
 .ex-chip:hover { border-color: var(--border2); color: var(--text); background: var(--bg3); }
 
-/* OUTPUT */
-.output { display: none; }
-.output.visible { display: block; animation: fadeUp 0.5s ease both; }
-@keyframes fadeUp { from { opacity:0; transform:translateY(16px); } to { opacity:1; transform:none; } }
-
-/* SECTION */
-.section {
-  margin-bottom: 1.5rem;
-  border: 1px solid var(--border);
-  border-radius: var(--rlg);
-  overflow: hidden;
-  background: var(--bg2);
-  animation: fadeUp 0.4s ease both;
+/* RESULT SECTIONS */
+.res-section {
+  background: var(--bg2); border: 1px solid var(--border);
+  border-radius: var(--radius-lg); overflow: hidden; margin-bottom: 1rem;
+  box-shadow: var(--shadow); animation: slideIn 0.3s ease both;
 }
-.section:nth-child(1) { animation-delay: 0.05s; }
-.section:nth-child(2) { animation-delay: 0.10s; }
-.section:nth-child(3) { animation-delay: 0.15s; }
-.section:nth-child(4) { animation-delay: 0.20s; }
-.section:nth-child(5) { animation-delay: 0.25s; }
-.section:nth-child(6) { animation-delay: 0.30s; }
+@keyframes slideIn { from { opacity:0; transform:translateY(10px); } to { opacity:1; transform:none; } }
+.res-section:nth-child(1) { animation-delay:0.04s; }
+.res-section:nth-child(2) { animation-delay:0.08s; }
+.res-section:nth-child(3) { animation-delay:0.12s; }
+.res-section:nth-child(4) { animation-delay:0.16s; }
+.res-section:nth-child(5) { animation-delay:0.20s; }
+.res-section:nth-child(6) { animation-delay:0.24s; }
 
-.section-header {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  padding: 1rem 1.25rem;
-  border-bottom: 1px solid var(--border);
+.res-header {
+  display: flex; align-items: center; gap: 10px;
+  padding: 0.875rem 1.25rem; border-bottom: 1px solid var(--border);
   background: var(--bg3);
 }
-.section-icon {
-  width: 32px; height: 32px;
-  border-radius: 8px;
-  display: flex; align-items: center; justify-content: center;
-  font-size: 16px;
-  flex-shrink: 0;
-}
-.section-title {
-  font-family: 'Syne', sans-serif;
-  font-size: 13px;
-  font-weight: 700;
-  letter-spacing: 0.05em;
-  text-transform: uppercase;
-  color: var(--text2);
-  flex: 1;
-}
+.res-icon { width: 30px; height: 30px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 15px; flex-shrink: 0; }
+.res-title { font-family: 'Syne', sans-serif; font-weight: 700; font-size: 13px; flex: 1; letter-spacing: 0.02em; }
 .copy-btn {
-  padding: 4px 12px;
-  background: transparent;
-  border: 1px solid var(--border);
-  border-radius: 6px;
-  font-family: 'DM Mono', monospace;
-  font-size: 11px;
-  color: var(--text3);
-  cursor: pointer;
-  transition: all 0.18s;
+  padding: 4px 11px; background: transparent; border: 1px solid var(--border);
+  border-radius: 6px; font-family: 'DM Mono', monospace; font-size: 11px;
+  color: var(--text3); cursor: pointer; transition: all 0.15s;
 }
 .copy-btn:hover { border-color: var(--border2); color: var(--text2); }
-.copy-btn.copied { color: var(--green); border-color: rgba(61,204,142,0.3); }
+.copy-btn.done { color: var(--teal); border-color: rgba(26,122,94,0.3); background: var(--teal-l); }
+.res-body { padding: 1.25rem 1.5rem; }
 
-.section-body { padding: 1.25rem 1.5rem; }
-
-/* CHARACTERS */
-.chars-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 1rem; }
+/* CHAR GRID */
+.chars-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 10px; }
 .char-item {
-  background: var(--bg3);
-  border: 1px solid var(--border);
-  border-radius: var(--r);
-  padding: 1rem;
-  position: relative;
-  overflow: hidden;
+  background: var(--bg3); border: 1px solid var(--border); border-radius: var(--radius);
+  padding: 1rem; position: relative; overflow: hidden; transition: all 0.15s;
 }
-.char-item::before {
-  content: '';
-  position: absolute;
-  top: 0; left: 0; right: 0;
-  height: 2px;
-}
+.char-item:hover { border-color: var(--border2); }
+.char-item::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2.5px; }
 .char-item:nth-child(1)::before { background: var(--gold); }
-.char-item:nth-child(2)::before { background: var(--red); }
-.char-item:nth-child(3)::before { background: var(--green); }
+.char-item:nth-child(2)::before { background: var(--coral); }
+.char-item:nth-child(3)::before { background: var(--teal); }
+.char-item:nth-child(4)::before { background: var(--purple); }
+.char-name { font-family: 'Syne', sans-serif; font-size: 15px; font-weight: 700; color: var(--text); margin-bottom: 3px; }
+.char-role { font-family: 'DM Mono', monospace; font-size: 10px; color: var(--text3); letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 8px; }
+.char-traits { display: flex; flex-wrap: wrap; gap: 4px; margin-bottom: 8px; }
+.trait { padding: 2px 8px; background: var(--bg4); border-radius: 99px; font-size: 11px; color: var(--text2); font-family: 'DM Mono', monospace; }
+.char-story { font-size: 12.5px; color: var(--text2); line-height: 1.6; font-style: italic; }
 
-.char-name {
-  font-family: 'Syne', sans-serif;
-  font-size: 16px;
-  font-weight: 700;
-  color: var(--text);
-  margin-bottom: 4px;
-}
-.char-role {
-  font-family: 'DM Mono', monospace;
-  font-size: 11px;
-  color: var(--text3);
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  margin-bottom: 10px;
-}
-.char-traits { display: flex; flex-wrap: wrap; gap: 4px; margin-bottom: 10px; }
-.trait {
-  padding: 2px 8px;
-  background: var(--bg4);
-  border-radius: 99px;
-  font-size: 12px;
-  color: var(--text2);
-  font-family: 'DM Mono', monospace;
-}
-.char-story { font-size: 13px; color: var(--text2); line-height: 1.6; font-style: italic; }
-
-/* THEMES */
-.themes-list { display: flex; flex-direction: column; gap: 10px; }
-.theme-item { display: flex; gap: 12px; align-items: flex-start; }
-.theme-num {
-  font-family: 'DM Mono', monospace;
-  font-size: 11px;
-  color: var(--gold);
-  width: 24px;
-  flex-shrink: 0;
-  margin-top: 2px;
-}
-.theme-text { font-size: 14px; color: var(--text); line-height: 1.6; }
-.theme-sub { font-size: 13px; color: var(--text2); line-height: 1.5; font-style: italic; margin-top: 2px; }
-
-/* SCENARIO */
-.acts { display: flex; flex-direction: column; gap: 1rem; }
+/* ACTS */
 .act {
-  background: var(--bg3);
-  border-radius: var(--r);
-  padding: 1rem 1.25rem;
-  border-left: 3px solid transparent;
-  position: relative;
+  background: var(--bg3); border-radius: 8px; padding: 1rem 1.25rem;
+  margin-bottom: 8px; border-left: 3px solid transparent;
 }
 .act.a1 { border-left-color: var(--purple); }
-.act.a2 { border-left-color: var(--red); }
-.act.a3 { border-left-color: var(--green); }
-.act-label {
-  font-family: 'DM Mono', monospace;
-  font-size: 10px;
-  letter-spacing: 0.15em;
-  text-transform: uppercase;
-  margin-bottom: 6px;
-}
+.act.a2 { border-left-color: var(--coral); }
+.act.a3 { border-left-color: var(--teal); }
+.act-label { font-family: 'DM Mono', monospace; font-size: 10px; letter-spacing: 0.12em; text-transform: uppercase; margin-bottom: 6px; }
 .act.a1 .act-label { color: var(--purple); }
-.act.a2 .act-label { color: var(--red); }
-.act.a3 .act-label { color: var(--green); }
+.act.a2 .act-label { color: var(--coral); }
+.act.a3 .act-label { color: var(--teal); }
 .act-text { font-size: 14px; color: var(--text); line-height: 1.75; }
 
 /* DIALOGUES */
 .dialogue-block { margin-bottom: 1.25rem; }
 .dialogue-block:last-child { margin-bottom: 0; }
-.dialogue-title {
-  font-family: 'DM Mono', monospace;
-  font-size: 11px;
-  color: var(--text3);
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-  margin-bottom: 10px;
-  padding-bottom: 6px;
-  border-bottom: 1px solid var(--border);
-}
-.line { display: flex; gap: 10px; margin-bottom: 8px; align-items: flex-start; }
-.line-name {
-  font-family: 'Syne', sans-serif;
-  font-size: 12px;
-  font-weight: 700;
-  min-width: 90px;
-  text-align: right;
-  padding-top: 2px;
-  flex-shrink: 0;
-}
-.line-name.p1 { color: var(--gold); }
-.line-name.p2 { color: var(--blue); }
-.line-name.p3 { color: var(--green); }
-.line-name.narr { color: var(--text3); font-style: italic; font-weight: 400; font-family: 'Lora', serif; }
-.line-text {
-  font-size: 14px;
-  color: var(--text);
-  line-height: 1.65;
-  background: var(--bg3);
-  border-radius: 0 8px 8px 8px;
-  padding: 8px 12px;
-  flex: 1;
-}
-.line-text.narr { background: transparent; color: var(--text2); font-style: italic; padding: 4px 0; border-radius: 0; }
+.dialogue-label { font-family: 'DM Mono', monospace; font-size: 10px; color: var(--text3); letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 10px; padding-bottom: 6px; border-bottom: 1px solid var(--border); }
+.dline { display: flex; gap: 10px; margin-bottom: 7px; align-items: flex-start; }
+.dname { font-family: 'Syne', sans-serif; font-size: 11px; font-weight: 700; min-width: 88px; text-align: right; padding-top: 8px; flex-shrink: 0; }
+.dname.p1 { color: var(--amber); }
+.dname.p2 { color: var(--purple); }
+.dname.p3 { color: var(--teal); }
+.dname.narr { color: var(--text3); font-style: italic; font-weight: 400; font-family: 'DM Sans', sans-serif; }
+.dtext { font-size: 14px; color: var(--text); line-height: 1.65; background: var(--bg3); border-radius: 0 8px 8px 8px; padding: 7px 12px; flex: 1; }
+.dtext.narr { background: transparent; color: var(--text2); font-style: italic; padding: 6px 0; border-radius: 0; }
 
-/* TITLES */
-.titles-list { display: flex; flex-direction: column; gap: 8px; }
+/* TITLES LIST */
+.titles-list { display: flex; flex-direction: column; gap: 7px; }
 .title-item {
-  display: flex;
-  gap: 12px;
-  align-items: center;
-  padding: 10px 14px;
-  background: var(--bg3);
-  border-radius: 8px;
-  border: 1px solid var(--border);
-  transition: border-color 0.18s;
+  display: flex; gap: 12px; align-items: center;
+  padding: 10px 14px; background: var(--bg3); border-radius: 8px;
+  border: 1px solid var(--border); transition: all 0.15s;
 }
-.title-item:hover { border-color: var(--border2); }
-.title-lang {
-  font-family: 'DM Mono', monospace;
-  font-size: 10px;
-  color: var(--text3);
-  letter-spacing: 0.1em;
-  width: 32px;
-  flex-shrink: 0;
-  text-transform: uppercase;
-}
+.title-item:hover { border-color: var(--border2); background: var(--bg4); }
+.title-lang { font-family: 'DM Mono', monospace; font-size: 10px; color: var(--text3); letter-spacing: 0.1em; width: 30px; flex-shrink: 0; text-transform: uppercase; }
 .title-text { font-size: 14px; color: var(--text); flex: 1; }
-.title-copy {
-  font-size: 16px;
-  cursor: pointer;
-  opacity: 0.3;
-  transition: opacity 0.18s;
-  background: none; border: none; color: inherit;
+.title-copy { font-size: 14px; cursor: pointer; opacity: 0.25; transition: opacity 0.15s; background: none; border: none; color: var(--text); padding: 4px; }
+.title-copy:hover { opacity: 0.8; }
+
+/* LECON BOX */
+.lecon-box {
+  background: linear-gradient(135deg, rgba(200,154,40,0.06), rgba(45,106,79,0.04));
+  border: 1px solid rgba(200,154,40,0.2); border-radius: var(--radius);
+  padding: 1.25rem; text-align: center; margin-top: 1rem;
 }
-.title-copy:hover { opacity: 1; }
+.lecon-quote { font-size: 16px; color: var(--text); font-style: italic; line-height: 1.7; }
+.lecon-quote::before { content: '\201C'; color: var(--gold); font-size: 24px; line-height: 0; vertical-align: -8px; margin-right: 3px; }
+.lecon-quote::after { content: '\201D'; color: var(--gold); font-size: 24px; line-height: 0; vertical-align: -8px; margin-left: 3px; }
 
 /* CALENDAR */
 .cal-week { margin-bottom: 1.25rem; }
 .cal-week:last-child { margin-bottom: 0; }
-.cal-week-title {
-  font-family: 'Syne', sans-serif;
-  font-size: 12px;
-  font-weight: 700;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  color: var(--text3);
-  margin-bottom: 10px;
-}
-.cal-day {
-  display: flex;
-  gap: 12px;
-  margin-bottom: 8px;
-  align-items: flex-start;
-}
-.cal-day-num {
-  font-family: 'DM Mono', monospace;
-  font-size: 11px;
-  color: var(--gold);
-  width: 52px;
-  flex-shrink: 0;
-  padding-top: 1px;
-}
+.cal-week-title { font-family: 'Syne', sans-serif; font-size: 11px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; color: var(--text3); margin-bottom: 10px; }
+.cal-day { display: flex; gap: 12px; margin-bottom: 8px; align-items: flex-start; }
+.cal-day-num { font-family: 'DM Mono', monospace; font-size: 11px; color: var(--accent); width: 52px; flex-shrink: 0; padding-top: 1px; }
 .cal-day-content { font-size: 13px; color: var(--text2); line-height: 1.6; flex: 1; }
 .cal-platforms { display: flex; gap: 4px; flex-wrap: wrap; margin-top: 4px; }
-.cal-plat {
-  padding: 2px 8px;
-  border-radius: 99px;
-  font-family: 'DM Mono', monospace;
-  font-size: 10px;
-  background: var(--bg4);
-  color: var(--text3);
-}
-.cal-plat.yt { background: rgba(232,96,74,0.1); color: var(--red); }
-.cal-plat.tt { background: rgba(155,110,250,0.1); color: var(--purple); }
-.cal-plat.fb { background: rgba(74,144,232,0.1); color: var(--blue); }
-.cal-plat.ig { background: rgba(232,200,74,0.1); color: var(--gold); }
+.cal-plat { padding: 2px 8px; border-radius: 99px; font-family: 'DM Mono', monospace; font-size: 10px; }
+.cal-plat.yt { background: var(--coral-l); color: var(--coral); }
+.cal-plat.tt { background: var(--purple-l); color: var(--purple); }
+.cal-plat.fb { background: rgba(59,89,152,0.08); color: #3B5998; }
+.cal-plat.ig { background: var(--amber-l); color: var(--amber); }
 
-/* LECON */
-.lecon-box {
-  background: linear-gradient(135deg, rgba(232,200,74,0.06), rgba(61,204,142,0.04));
-  border: 1px solid rgba(232,200,74,0.2);
-  border-radius: var(--r);
-  padding: 1.25rem 1.5rem;
-  text-align: center;
-}
-.lecon-quote {
-  font-size: 18px;
-  color: var(--text);
-  font-style: italic;
-  line-height: 1.7;
-}
-.lecon-quote::before { content: '\201C'; color: var(--gold); font-size: 28px; line-height: 0; vertical-align: -10px; margin-right: 4px; }
-.lecon-quote::after { content: '\201D'; color: var(--gold); font-size: 28px; line-height: 0; vertical-align: -10px; margin-left: 4px; }
+/* THEME ITEMS */
+.theme-item { display: flex; gap: 12px; align-items: flex-start; margin-bottom: 10px; }
+.theme-num { font-family: 'DM Mono', monospace; font-size: 11px; color: var(--gold); width: 24px; flex-shrink: 0; margin-top: 2px; }
+.theme-text { font-size: 14px; color: var(--text); line-height: 1.6; }
+.theme-sub { font-size: 12.5px; color: var(--text2); font-style: italic; margin-top: 2px; }
 
 /* EXPORT BAR */
-.export-bar {
-  display: flex;
-  gap: 8px;
-  flex-wrap: wrap;
-  margin-top: 1.5rem;
-  padding-top: 1.5rem;
-  border-top: 1px solid var(--border);
-}
+.export-bar { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 1.5rem; padding-top: 1.5rem; border-top: 1px solid var(--border); }
 .exp-btn {
-  padding: 8px 16px;
-  border-radius: 8px;
-  font-family: 'DM Mono', monospace;
-  font-size: 12px;
-  cursor: pointer;
-  border: 1px solid var(--border);
-  background: var(--bg2);
-  color: var(--text2);
-  transition: all 0.18s;
+  padding: 8px 16px; border-radius: 8px; font-family: 'DM Mono', monospace;
+  font-size: 12px; cursor: pointer; border: 1px solid var(--border);
+  background: var(--bg2); color: var(--text2); transition: all 0.15s;
 }
-.exp-btn:hover { border-color: var(--border2); color: var(--text); }
-.exp-btn.primary { background: rgba(232,200,74,0.1); border-color: rgba(232,200,74,0.3); color: var(--gold); }
-.exp-btn.primary:hover { background: rgba(232,200,74,0.18); }
+.exp-btn:hover { border-color: var(--border2); color: var(--text); background: var(--bg3); }
+.exp-btn.primary { background: var(--accent-light2); border-color: rgba(45,106,79,0.3); color: var(--accent); }
+.exp-btn.primary:hover { background: rgba(45,106,79,0.2); }
 
 /* TOAST */
 .toast {
-  position: fixed;
-  bottom: 24px; right: 24px;
-  background: var(--bg3);
-  border: 1px solid var(--border2);
-  border-radius: 10px;
-  padding: 10px 16px;
-  font-family: 'DM Mono', monospace;
-  font-size: 12px;
-  color: var(--green);
-  display: flex; align-items: center; gap: 8px;
-  transform: translateY(60px); opacity: 0;
-  transition: all 0.3s ease;
-  z-index: 999;
-  box-shadow: 0 8px 32px rgba(0,0,0,0.5);
+  position: fixed; bottom: 20px; right: 20px;
+  background: var(--text); border-radius: 10px;
+  padding: 10px 16px; font-family: 'DM Mono', monospace; font-size: 12px;
+  color: white; display: flex; align-items: center; gap: 8px;
+  transform: translateY(60px); opacity: 0; transition: all 0.25s ease;
+  z-index: 999; box-shadow: 0 8px 24px rgba(0,0,0,0.2);
 }
 .toast.show { transform: none; opacity: 1; }
+.toast-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--teal); }
 
-/* REGEN */
-.regen-bar {
-  text-align: center;
-  margin-top: 1rem;
-}
+/* SCROLLBAR */
+::-webkit-scrollbar { width: 4px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--bg4); border-radius: 99px; }
 
-@media (max-width: 600px) {
-  .logo { font-size: 30px; }
+@media (max-width: 768px) {
+  .sidebar { width: 52px; }
+  .logo-area .logo, .logo-area .logo-sub, .nav-item span, .nav-badge, .sidebar-footer span { display: none; }
+  .main { margin-left: 52px; }
+  .grid-2 { grid-template-columns: 1fr; }
+  .grid-3 { grid-template-columns: 1fr 1fr; }
   .chars-grid { grid-template-columns: 1fr; }
-  .line-name { min-width: 70px; font-size: 11px; }
 }
 </style>
 </head>
 <body>
 
-<div class="app">
-  <div class="header">
+<aside class="sidebar">
+  <div class="logo-area">
     <div class="logo">Art'<em>Fan</em></div>
-    <div class="logo-sub">Moteur narratif éducatif · v2.0</div>
+    <div class="logo-sub">Studio créatif</div>
   </div>
+  <nav class="nav">
+    <button class="nav-item active" onclick="goTo('dashboard',this)">
+      <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
+      <span>Tableau de bord</span>
+    </button>
+    <button class="nav-item" onclick="goTo('characters',this)">
+      <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg>
+      <span>Personnages</span>
+      <span class="nav-badge" id="nb-chars">0</span>
+    </button>
+    <button class="nav-item" onclick="goTo('scenarios',this)">
+      <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 6h16M4 10h16M4 14h10"/><rect x="14" y="13" width="7" height="7" rx="1"/></svg>
+      <span>Scénarios</span>
+      <span class="nav-badge" id="nb-scens">0</span>
+    </button>
+    <button class="nav-item" onclick="goTo('engine',this)">
+      <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 3l1.5 4.5H18l-3.75 2.7 1.5 4.5L12 12l-3.75 2.7 1.5-4.5L6 7.5h4.5z"/></svg>
+      <span>Moteur narratif</span>
+    </button>
+    <button class="nav-item" onclick="goTo('ai',this)">
+      <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M4.22 4.22l2.12 2.12M17.66 17.66l2.12 2.12M2 12h3M19 12h3M4.22 19.78l2.12-2.12M17.66 6.34l2.12-2.12"/></svg>
+      <span>Aide ponctuelle</span>
+    </button>
+  </nav>
+  <div class="sidebar-footer">
+    <div class="version-badge">
+      <div class="version-dot"></div>
+      <span>v2.0 · Art'Fan</span>
+    </div>
+  </div>
+</aside>
 
-  <div class="input-zone">
-    <span class="input-label">Votre idée de départ</span>
-    <textarea class="main-input" id="idea" rows="2"
-      placeholder="Ex: un jeune tenté par l'argent facile, une mère qui sacrifie tout pour ses enfants..."></textarea>
-    <div class="input-footer">
-      <div class="lang-pills">
-        <button class="lang-pill on" onclick="setLang(this,'fr')">FR</button>
-        <button class="lang-pill" onclick="setLang(this,'mg')">MG</button>
-        <button class="lang-pill" onclick="setLang(this,'en')">EN</button>
-        <button class="lang-pill" onclick="setLang(this,'mix')">MIX</button>
-      </div>
-      <button class="gen-btn" id="gen-btn" onclick="generate()">
-        <span>⚡</span> Générer l'histoire
-      </button>
+<main class="main">
+  <div class="topbar">
+    <span class="page-title" id="page-title">Tableau de bord</span>
+    <div class="topbar-right">
+      <span class="tag tag-accent" style="font-size:11px">Créateur de JDR éducatif</span>
     </div>
   </div>
 
-  <div class="examples">
-    <span class="input-label" style="width:100%;margin-bottom:4px">Exemples :</span>
-    <span class="ex-chip" onclick="useEx(this)">la tentation de l'argent facile</span>
-    <span class="ex-chip" onclick="useEx(this)">un jeune qui abandonne ses études</span>
-    <span class="ex-chip" onclick="useEx(this)">la pression familiale du mariage</span>
-    <span class="ex-chip" onclick="useEx(this)">trahison entre amis d'enfance</span>
-    <span class="ex-chip" onclick="useEx(this)">réussir sans perdre ses valeurs</span>
-    <span class="ex-chip" onclick="useEx(this)">choisir entre tradition et modernité</span>
+  <div class="content">
+
+    <!-- DASHBOARD -->
+    <div id="page-dashboard" class="page active">
+      <div class="welcome">
+        <h1>Bienvenue, <em>Art'Fan</em> 🎭</h1>
+        <p>Votre studio de création de jeux de rôle éducatifs. Créez vos personnages, écrivez vos scénarios, et laissez le moteur narratif générer vos histoires.</p>
+      </div>
+      <div class="grid-3" style="margin-bottom:1.25rem">
+        <div class="metric-card green"><div class="metric-num" id="d-chars">0</div><div class="metric-label">Personnages</div></div>
+        <div class="metric-card purple"><div class="metric-num" id="d-scens">0</div><div class="metric-label">Scénarios</div></div>
+        <div class="metric-card coral"><div class="metric-num" id="d-themes">0</div><div class="metric-label">Thèmes explorés</div></div>
+      </div>
+      <div class="grid-2">
+        <div class="card">
+          <div class="card-title"><div class="card-icon" style="background:var(--purple-l)">👤</div>Derniers personnages</div>
+          <div id="d-char-list"><div class="empty"><div class="empty-icon">🎭</div>Aucun personnage encore</div></div>
+          <button class="btn btn-ghost btn-sm mt-2" onclick="goTo('characters',null)">Créer un personnage →</button>
+        </div>
+        <div class="card">
+          <div class="card-title"><div class="card-icon" style="background:var(--coral-l)">📖</div>Derniers scénarios</div>
+          <div id="d-scen-list"><div class="empty"><div class="empty-icon">📖</div>Aucun scénario encore</div></div>
+          <button class="btn btn-ghost btn-sm mt-2" onclick="goTo('scenarios',null)">Créer un scénario →</button>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-title"><div class="card-icon" style="background:var(--accent-light2)">⚡</div>Démarrage rapide</div>
+        <div class="grid-3" style="gap:8px">
+          <button class="btn btn-ghost" style="justify-content:center;padding:1rem;flex-direction:column;gap:6px;height:auto" onclick="goTo('engine',null)">
+            <div style="font-size:22px">⚡</div>
+            <div style="font-size:13px;font-weight:500;color:var(--text)">Moteur narratif</div>
+            <div style="font-size:12px;color:var(--text3)">Un thème → histoire complète</div>
+          </button>
+          <button class="btn btn-ghost" style="justify-content:center;padding:1rem;flex-direction:column;gap:6px;height:auto" onclick="goTo('characters',null)">
+            <div style="font-size:22px">🎭</div>
+            <div style="font-size:13px;font-weight:500;color:var(--text)">Nouveau perso</div>
+            <div style="font-size:12px;color:var(--text3)">Créer un archétype</div>
+          </button>
+          <button class="btn btn-ghost" style="justify-content:center;padding:1rem;flex-direction:column;gap:6px;height:auto" onclick="goTo('scenarios',null)">
+            <div style="font-size:22px">✍️</div>
+            <div style="font-size:13px;font-weight:500;color:var(--text)">Écrire un scénario</div>
+            <div style="font-size:12px;color:var(--text3)">Structure en 3 actes</div>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- PERSONNAGES -->
+    <div id="page-characters" class="page">
+      <div class="card">
+        <div class="card-title"><div class="card-icon" style="background:var(--purple-l)">✨</div>Créer un personnage</div>
+        <div class="grid-2">
+          <div><label>Nom</label><input type="text" id="c-name" placeholder="Ex: Rakoto, Niry..."></div>
+          <div><label>Rôle / Archétype</label>
+            <select id="c-role">
+              <option value="">Choisir un rôle</option>
+              <option>Le mentor</option><option>Le jeune ambitieux</option>
+              <option>Le sage traditionnel</option><option>L'entrepreneur moderne</option>
+              <option>La mère courageuse</option><option>Le sceptique</option>
+              <option>Le corrompu</option><option>L'innocent</option>
+              <option>Le leader naturel</option><option>L'idéaliste</option>
+              <option>Personnage personnalisé</option>
+            </select>
+          </div>
+        </div>
+        <label>Traits de personnalité</label>
+        <input type="text" id="c-traits" placeholder="Ex: courageux, têtu, généreux...">
+        <label>Backstory</label>
+        <textarea id="c-story" placeholder="Qui est ce personnage ? D'où vient-il ?"></textarea>
+        <div class="grid-2">
+          <div><label>Langue principale</label>
+            <select id="c-lang"><option>Malgache</option><option>Français</option><option>Anglais</option><option>Mélangé</option></select>
+          </div>
+          <div><label>Plateforme cible</label>
+            <select id="c-platform"><option>Toutes les plateformes</option><option>YouTube</option><option>TikTok</option><option>Facebook</option><option>Instagram</option></select>
+          </div>
+        </div>
+        <div class="mt-2 flex gap-2">
+          <button class="btn btn-primary" onclick="saveChar()">Sauvegarder</button>
+          <button class="btn btn-ghost" onclick="clearChar()">Effacer</button>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-title"><div class="card-icon" style="background:var(--accent-light2)">🎭</div>Mes personnages (<span id="char-count">0</span>)</div>
+        <div id="char-list"><div class="empty"><div class="empty-icon">🎭</div>Aucun personnage créé</div></div>
+      </div>
+    </div>
+
+    <!-- SCÉNARIOS -->
+    <div id="page-scenarios" class="page">
+      <div class="card">
+        <div class="card-title"><div class="card-icon" style="background:var(--coral-l)">📝</div>Nouveau scénario</div>
+        <label>Titre de l'épisode</label>
+        <input type="text" id="s-title" placeholder="Ex: Le choix de Rakoto...">
+        <label style="margin-top:12px">Thèmes éducatifs</label>
+        <div class="theme-tags" id="theme-picker">
+          <span class="theme-tag" onclick="toggleTheme(this)">Mentalité de réussite</span>
+          <span class="theme-tag" onclick="toggleTheme(this)">Gestion de l'argent</span>
+          <span class="theme-tag" onclick="toggleTheme(this)">Respect des anciens</span>
+          <span class="theme-tag" onclick="toggleTheme(this)">Entrepreneuriat</span>
+          <span class="theme-tag" onclick="toggleTheme(this)">Éducation</span>
+          <span class="theme-tag" onclick="toggleTheme(this)">Relations amoureuses</span>
+          <span class="theme-tag" onclick="toggleTheme(this)">Amitié & trahison</span>
+          <span class="theme-tag" onclick="toggleTheme(this)">Leadership</span>
+          <span class="theme-tag" onclick="toggleTheme(this)">Foi & spiritualité</span>
+          <span class="theme-tag" onclick="toggleTheme(this)">Pression sociale</span>
+          <span class="theme-tag" onclick="toggleTheme(this)">Famille</span>
+          <span class="theme-tag" onclick="toggleTheme(this)">Identité malgache</span>
+        </div>
+        <label>Leçon de vie à transmettre</label>
+        <textarea id="s-lesson" placeholder="Quelle leçon le spectateur retient après cette vidéo ?"></textarea>
+        <label>Personnage principal</label>
+        <select id="s-char"><option value="">Aucun</option></select>
+        <label style="margin-top:12px">Structure narrative</label>
+        <div class="scene-block s1"><div class="scene-num">Acte 1 — Introduction</div><textarea id="scene1" placeholder="Mise en situation..." style="margin-bottom:0;min-height:65px"></textarea></div>
+        <div class="scene-block s2"><div class="scene-num">Acte 2 — Conflit / Dilemme</div><textarea id="scene2" placeholder="Le problème, la tentation..." style="margin-bottom:0;min-height:65px"></textarea></div>
+        <div class="scene-block s3"><div class="scene-num">Acte 3 — Résolution & Leçon</div><textarea id="scene3" placeholder="Comment le personnage s'en sort ?" style="margin-bottom:0;min-height:65px"></textarea></div>
+        <div id="extra-scenes"></div>
+        <div class="mt-2 flex gap-2">
+          <button class="btn btn-primary" onclick="saveScen()">Sauvegarder</button>
+          <button class="btn btn-ghost" onclick="addScene()">+ Scène</button>
+          <button class="btn btn-ghost" onclick="clearScen()">Effacer</button>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-title"><div class="card-icon" style="background:var(--coral-l)">📚</div>Mes scénarios (<span id="scen-count">0</span>)</div>
+        <div id="scen-list"><div class="empty"><div class="empty-icon">📖</div>Aucun scénario créé</div></div>
+      </div>
+    </div>
+
+    <!-- MOTEUR NARRATIF -->
+    <div id="page-engine" class="page">
+      <div class="card" style="margin-bottom:0.75rem">
+        <div class="card-title"><div class="card-icon" style="background:var(--accent-light2)">⚡</div>Moteur narratif algorithmique</div>
+        <p style="font-size:13.5px;color:var(--text2);line-height:1.65;margin-bottom:1rem">Entrez une ligne d'idée — le moteur génère automatiquement personnages, scénario, dialogues, titres et plan de publication. <strong style="color:var(--text)">Aucune IA ni internet requis.</strong></p>
+        <div class="engine-input-zone">
+          <span class="engine-label">Votre idée de départ</span>
+          <textarea class="engine-input" id="eng-idea" rows="2" placeholder="Ex: un jeune tenté par l'argent facile, une mère qui sacrifie tout..."></textarea>
+          <div class="engine-footer">
+            <div class="lang-pills">
+              <button class="lang-pill on" onclick="setLang(this,'fr')">FR</button>
+              <button class="lang-pill" onclick="setLang(this,'mg')">MG</button>
+              <button class="lang-pill" onclick="setLang(this,'en')">EN</button>
+              <button class="lang-pill" onclick="setLang(this,'mix')">MIX</button>
+            </div>
+            <button class="btn btn-primary" id="eng-btn" onclick="generate()">⚡ Générer l'histoire</button>
+          </div>
+        </div>
+        <div class="examples-row">
+          <span class="ex-chip" onclick="useEx(this)">la tentation de l'argent facile</span>
+          <span class="ex-chip" onclick="useEx(this)">un jeune qui abandonne ses études</span>
+          <span class="ex-chip" onclick="useEx(this)">la pression familiale du mariage</span>
+          <span class="ex-chip" onclick="useEx(this)">trahison entre amis d'enfance</span>
+          <span class="ex-chip" onclick="useEx(this)">réussir sans perdre ses valeurs</span>
+          <span class="ex-chip" onclick="useEx(this)">choisir entre tradition et modernité</span>
+        </div>
+      </div>
+      <div id="eng-output"></div>
+    </div>
+
+    <!-- AIDE PONCTUELLE -->
+    <div id="page-ai" class="page">
+      <div class="card">
+        <div class="card-title"><div class="card-icon" style="background:var(--purple-l)">✍️</div>Aide à l'écriture ponctuelle</div>
+        <p style="font-size:13.5px;color:var(--text2);line-height:1.65;margin-bottom:1rem">Construisez manuellement un élément précis de votre histoire à l'aide des outils ci-dessous.</p>
+        <label>Type d'aide</label>
+        <select id="help-type" onchange="renderHelpTool()">
+          <option value="names">Générateur de noms</option>
+          <option value="traits">Combinateur de traits</option>
+          <option value="titles">Formules de titres</option>
+          <option value="hooks">Accroches d'intro</option>
+          <option value="lessons">Banque de leçons de vie</option>
+        </select>
+      </div>
+      <div id="help-output" class="card"></div>
+    </div>
+
   </div>
+</main>
 
-  <div class="output" id="output"></div>
-</div>
-
-<div class="toast" id="toast">✓ <span id="toast-msg">Copié !</span></div>
+<div class="toast" id="toast"><div class="toast-dot"></div><span id="toast-msg">Copié !</span></div>
 
 <script>
+// ============== STATE ==============
+let chars = [], scens = [], selectedThemes = [], extraSceneCount = 0;
 let currentLang = 'fr';
-let lastIdea = '';
-let lastResult = null;
 
-function setLang(el, lang) {
-  document.querySelectorAll('.lang-pill').forEach(p => p.classList.remove('on'));
-  el.classList.add('on');
-  currentLang = lang;
-}
+const pageTitles = { dashboard:'Tableau de bord', characters:'Personnages', scenarios:'Scénarios', engine:'Moteur narratif', ai:'Aide ponctuelle' };
 
-function useEx(el) {
-  document.getElementById('idea').value = el.textContent;
+function goTo(id, btn) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.getElementById('page-' + id).classList.add('active');
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  if (btn) btn.classList.add('active');
+  else document.querySelectorAll('.nav-item').forEach(n => { if (n.getAttribute('onclick')?.includes("'"+id+"'")) n.classList.add('active'); });
+  document.getElementById('page-title').textContent = pageTitles[id];
+  if (id === 'dashboard') refreshDash();
+  if (id === 'scenarios') updateCharSelect();
+  if (id === 'ai') renderHelpTool();
 }
 
 function toast(msg) {
   document.getElementById('toast-msg').textContent = msg;
   const t = document.getElementById('toast');
   t.classList.add('show');
-  setTimeout(() => t.classList.remove('show'), 2500);
+  setTimeout(() => t.classList.remove('show'), 2400);
 }
 
-// ============================================================
-// MOTEUR NARRATIF — BASE DE DONNÉES
-// ============================================================
+// ============== CHARACTERS ==============
+function saveChar() {
+  const name = document.getElementById('c-name').value.trim();
+  if (!name) { document.getElementById('c-name').focus(); return; }
+  chars.push({ id: Date.now(), name, role: document.getElementById('c-role').value, traits: document.getElementById('c-traits').value, story: document.getElementById('c-story').value, lang: document.getElementById('c-lang').value, platform: document.getElementById('c-platform').value });
+  renderCharsUI(); clearChar(); toast('Personnage sauvegardé ✓');
+}
+function clearChar() { ['c-name','c-traits','c-story'].forEach(id => document.getElementById(id).value = ''); document.getElementById('c-role').value = ''; }
+function deleteChar(id) { chars = chars.filter(c => c.id !== id); renderCharsUI(); }
+function renderCharsUI() {
+  const list = document.getElementById('char-list');
+  document.getElementById('char-count').textContent = chars.length;
+  document.getElementById('nb-chars').textContent = chars.length;
+  if (!chars.length) { list.innerHTML = '<div class="empty"><div class="empty-icon">🎭</div>Aucun personnage créé</div>'; return; }
+  list.innerHTML = chars.map(c => `<div class="char-card"><div class="avatar">${c.name.charAt(0).toUpperCase()}</div><div style="flex:1;min-width:0"><div style="display:flex;justify-content:space-between;align-items:center"><strong style="font-size:15px;font-family:'Syne',sans-serif">${c.name}</strong><button class="btn btn-ghost btn-sm" onclick="deleteChar(${c.id})" style="padding:3px 8px;color:var(--text3)">✕</button></div><div style="display:flex;gap:5px;flex-wrap:wrap;margin-top:5px">${c.role?`<span class="tag tag-purple">${c.role}</span>`:''}<span class="tag tag-accent">${c.lang}</span></div>${c.traits?`<p style="font-size:13px;color:var(--text2);margin-top:5px">${c.traits}</p>`:''}</div></div>`).join('');
+}
 
+// ============== SCENARIOS ==============
+function toggleTheme(el) { el.classList.toggle('on'); const t = el.textContent; if (el.classList.contains('on')) selectedThemes.push(t); else selectedThemes = selectedThemes.filter(x => x !== t); }
+function updateCharSelect() { const sel = document.getElementById('s-char'); sel.innerHTML = '<option value="">Aucun</option>'; chars.forEach(c => { const o = document.createElement('option'); o.value = c.id; o.textContent = c.name + (c.role ? ' — ' + c.role : ''); sel.appendChild(o); }); }
+function addScene() { extraSceneCount++; const n = 3 + extraSceneCount; const d = document.getElementById('extra-scenes'); const div = document.createElement('div'); div.className = 'scene-block s1'; div.innerHTML = `<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px"><div class="scene-num">Scène ${n}</div><button class="btn btn-ghost btn-sm" onclick="this.closest('.scene-block').remove()" style="padding:2px 8px;font-size:11px">✕</button></div><textarea id="scene${n}" placeholder="Décrivez cette scène..." style="margin-bottom:0;min-height:65px"></textarea>`; d.appendChild(div); }
+function saveScen() {
+  const title = document.getElementById('s-title').value.trim();
+  if (!title) { document.getElementById('s-title').focus(); return; }
+  const scenes = []; for (let i = 1; i <= 3 + extraSceneCount; i++) { const el = document.getElementById('scene'+i); if (el) scenes.push(el.value); }
+  scens.push({ id: Date.now(), title, themes: [...selectedThemes], lesson: document.getElementById('s-lesson').value, charId: document.getElementById('s-char').value, scenes });
+  renderScensUI(); clearScen(); toast('Scénario sauvegardé ✓');
+}
+function clearScen() { document.getElementById('s-title').value=''; document.getElementById('s-lesson').value=''; document.querySelectorAll('.theme-tag.on').forEach(t=>t.classList.remove('on')); selectedThemes=[]; ['scene1','scene2','scene3'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';}); document.getElementById('extra-scenes').innerHTML=''; extraSceneCount=0; }
+function deleteScen(id) { scens = scens.filter(s => s.id !== id); renderScensUI(); }
+function renderScensUI() {
+  const list = document.getElementById('scen-list');
+  document.getElementById('scen-count').textContent = scens.length;
+  document.getElementById('nb-scens').textContent = scens.length;
+  if (!scens.length) { list.innerHTML = '<div class="empty"><div class="empty-icon">📖</div>Aucun scénario créé</div>'; return; }
+  list.innerHTML = scens.map(s => { const ch = chars.find(c=>c.id==s.charId); return `<div class="char-card" style="flex-direction:column;gap:7px"><div style="display:flex;justify-content:space-between"><strong style="font-size:14px;font-family:'Syne',sans-serif">${s.title}</strong><button class="btn btn-ghost btn-sm" onclick="deleteScen(${s.id})" style="padding:3px 8px;color:var(--text3)">✕</button></div><div style="display:flex;flex-wrap:wrap;gap:4px">${s.themes.map(t=>`<span class="tag tag-amber">${t}</span>`).join('')}${ch?`<span class="tag tag-purple">${ch.name}</span>`:''}</div>${s.lesson?`<p style="font-size:13px;color:var(--text2);font-style:italic">"${s.lesson}"</p>`:''}<span class="tag tag-accent" style="font-size:11px;align-self:flex-start">${s.scenes.filter(Boolean).length} scène(s)</span></div>`; }).join('');
+}
+
+// ============== DASHBOARD ==============
+function refreshDash() {
+  document.getElementById('d-chars').textContent = chars.length;
+  document.getElementById('d-scens').textContent = scens.length;
+  document.getElementById('d-themes').textContent = [...new Set(scens.flatMap(s=>s.themes))].length;
+  const dcl = document.getElementById('d-char-list');
+  dcl.innerHTML = !chars.length ? '<div class="empty" style="padding:1rem"><div class="empty-icon">🎭</div>Aucun personnage</div>' : chars.slice(0,3).map(c=>`<div style="display:flex;align-items:center;gap:9px;margin-bottom:7px"><div class="avatar" style="width:32px;height:32px;font-size:13px">${c.name.charAt(0)}</div><span style="font-size:14px">${c.name}</span>${c.role?`<span class="tag tag-purple" style="font-size:11px">${c.role}</span>`:''}</div>`).join('');
+  const dsl = document.getElementById('d-scen-list');
+  dsl.innerHTML = !scens.length ? '<div class="empty" style="padding:1rem"><div class="empty-icon">📖</div>Aucun scénario</div>' : scens.slice(0,3).map(s=>`<div style="margin-bottom:8px"><div style="font-size:14px;font-weight:500">${s.title}</div><div style="display:flex;gap:4px;flex-wrap:wrap;margin-top:3px">${s.themes.slice(0,2).map(t=>`<span class="tag tag-amber" style="font-size:11px">${t}</span>`).join('')}</div></div>`).join('');
+}
+
+// ============== MOTEUR NARRATIF ==============
 const DB = {
-
-  // ARCHÉTYPES DE PERSONNAGES
   archetypes: [
-    { role: 'Le Mentor', traits: ['sage','patient','bienveillant'], emoji: '🧓',
-      stories: {
-        fr: (n,t) => `${n} est un vieux sage du village qui a tout vu. Il connaît les erreurs de jeunesse et leur prix.`,
-        mg: (n,t) => `${n} dia lehilahy antitra malala ao amin'ny tanàna. Nahita zavatra maro izy ka mahalala ny lalan'ny fiainana.`,
-        en: (n,t) => `${n} is a village elder who has seen it all. He knows the price of youthful mistakes firsthand.`,
-        mix: (n,t) => `${n} dia vieux sage ao amin'ny tanàna. Nahita zavatra maro izy — il connaît le prix des erreurs.`
-      }
-    },
-    { role: 'Le Jeune Ambitieux', traits: ['ambitieux','impulsif','courageux'], emoji: '🔥',
-      stories: {
-        fr: (n,t) => `${n} a grandi dans la pauvreté et rêve de s'en sortir. Mais son impatience le pousse vers des raccourcis dangereux.`,
-        mg: (n,t) => `${n} nitombo teo amin'ny fahantrana ka maniry ny hahita ny fahombiazana. Fa ny tsy fahandriany mitarika azy mankany amin'ny lalam-pady.`,
-        en: (n,t) => `${n} grew up poor and dreams of making it. But his impatience keeps pushing him toward dangerous shortcuts.`,
-        mix: (n,t) => `${n} nitombo teo amin'ny fahantrana — il rêve de s'en sortir. Fa ny tsy fahandriany, ça le pousse vers des raccourcis.`
-      }
-    },
-    { role: "L'Ami Fidèle", traits: ['loyal','honnête','protecteur'], emoji: '🤝',
-      stories: {
-        fr: (n,t) => `${n} est l'ami de toujours. Il voit tout mais parle rarement. Quand il parle, chaque mot compte.`,
-        mg: (n,t) => `${n} no namana hatramin'ny fahazazana. Mahita ny zavatra rehetra izy fa matetika mangina. Rehefa miteny izy, tsara ny mihaino.`,
-        en: (n,t) => `${n} is the lifelong friend. He sees everything but rarely speaks. When he does, every word counts.`,
-        mix: (n,t) => `${n} no namana hatramin'ny fahazazana. Il voit tout mais mange mangina. Rehefa miteny izy, chaque mot compte.`
-      }
-    },
-    { role: 'La Mère Forte', traits: ['sacrifiée','aimante','déterminée'], emoji: '💪',
-      stories: {
-        fr: (n,t) => `${n} a tout sacrifié pour ses enfants. Elle porte le poids de la famille sans jamais se plaindre.`,
-        mg: (n,t) => `${n} nandoa ny zavatra rehetra ho an'ny zanany. Mitondra ny entam-pianakaviana izy nefa tsy mitaraina.`,
-        en: (n,t) => `${n} sacrificed everything for her children. She carries the family's burden without ever complaining.`,
-        mix: (n,t) => `${n} nandoa ny zavatra rehetra ho an'ny zanany. Elle porte tout — nefa tsy mitaraina mihitsy.`
-      }
-    },
-    { role: 'Le Tenté', traits: ['vulnérable','tiraillé','sensible'], emoji: '😔',
-      stories: {
-        fr: (n,t) => `${n} est fondamentalement bon, mais les circonstances le poussent à douter de lui-même et de ses valeurs.`,
-        mg: (n,t) => `${n} dia olona tsara fo, fa ny toe-draharaha mampihoron-koditra azy ka manohina ny finoany sy ny soa nampianarina azy.`,
-        en: (n,t) => `${n} is fundamentally good, but circumstances push him to doubt himself and his values.`,
-        mix: (n,t) => `${n} dia olona tsara fo, mais les circonstances le font douter — manohina ny finoany.`
-      }
-    },
-    { role: 'Le Corrupteur', traits: ['manipulateur','charismatique','dangereux'], emoji: '🐍',
-      stories: {
-        fr: (n,t) => `${n} a l'air sympathique au premier abord. Mais derrière ce sourire se cache un homme qui se nourrit de la faiblesse des autres.`,
-        mg: (n,t) => `${n} miseho ho olona tsara izy voalohany. Fa ao ambadiky io fitombenana io, dia olona mivelona amin'ny fahalemen'ny hafa.`,
-        en: (n,t) => `${n} seems charming at first glance. But behind that smile hides someone who feeds on others' weaknesses.`,
-        mix: (n,t) => `${n} miseho ho olona tsara — très sympathique. Fa ao ambadiky io fitombenana io, quelqu'un de dangereux.`
-      }
-    }
+    { role:'Le Mentor', traits:['sage','patient','bienveillant'], emoji:'🧓', stories:{ fr:(n)=>`${n} est un vieux sage qui a tout vu. Il connaît les erreurs de jeunesse et leur prix.`, mg:(n)=>`${n} dia lehilahy antitra malala. Nahita zavatra maro izy ka mahalala ny lalan'ny fiainana.`, en:(n)=>`${n} is a village elder who has seen it all. He knows the price of youthful mistakes.`, mix:(n)=>`${n} dia vieux sage. Nahita zavatra maro izy — il connaît le prix des erreurs.` } },
+    { role:'Le Jeune Ambitieux', traits:['ambitieux','impulsif','courageux'], emoji:'🔥', stories:{ fr:(n)=>`${n} a grandi dans la pauvreté et rêve de s'en sortir. Son impatience le pousse vers des raccourcis dangereux.`, mg:(n)=>`${n} nitombo teo amin'ny fahantrana ka maniry ny fahombiazana. Fa ny tsy fahandriany mitarika azy mankany amin'ny lalam-pady.`, en:(n)=>`${n} grew up poor and dreams of making it. But his impatience keeps pushing him toward dangerous shortcuts.`, mix:(n)=>`${n} nitombo teo amin'ny fahantrana — il rêve de s'en sortir. Fa ny tsy fahandriany le pousse vers des raccourcis.` } },
+    { role:"L'Ami Fidèle", traits:['loyal','honnête','protecteur'], emoji:'🤝', stories:{ fr:(n)=>`${n} est l'ami de toujours. Il voit tout mais parle rarement. Quand il parle, chaque mot compte.`, mg:(n)=>`${n} no namana hatramin'ny fahazazana. Mahita ny zavatra rehetra izy fa matetika mangina. Rehefa miteny izy, tsara ny mihaino.`, en:(n)=>`${n} is the lifelong friend. He sees everything but rarely speaks. When he does, every word counts.`, mix:(n)=>`${n} no namana hatramin'ny fahazazana. Il voit tout mais mangina. Rehefa miteny izy, chaque mot compte.` } },
+    { role:'La Mère Forte', traits:['sacrifiée','aimante','déterminée'], emoji:'💪', stories:{ fr:(n)=>`${n} a tout sacrifié pour ses enfants. Elle porte le poids de la famille sans jamais se plaindre.`, mg:(n)=>`${n} nandoa ny zavatra rehetra ho an'ny zanany. Mitondra ny entam-pianakaviana izy nefa tsy mitaraina.`, en:(n)=>`${n} sacrificed everything for her children. She carries the family's burden without ever complaining.`, mix:(n)=>`${n} nandoa ny zavatra rehetra — elle porte tout nefa tsy mitaraina mihitsy.` } },
+    { role:'Le Tenté', traits:['vulnérable','tiraillé','sensible'], emoji:'😔', stories:{ fr:(n)=>`${n} est fondamentalement bon, mais les circonstances le poussent à douter de lui-même.`, mg:(n)=>`${n} dia olona tsara fo, fa ny toe-draharaha mampihoron-koditra azy ka manohina ny finoany.`, en:(n)=>`${n} is fundamentally good, but circumstances push him to doubt himself.`, mix:(n)=>`${n} dia olona tsara fo, mais les circonstances le font douter — manohina ny finoany.` } },
+    { role:'Le Corrupteur', traits:['manipulateur','charismatique','dangereux'], emoji:'🐍', stories:{ fr:(n)=>`${n} a l'air sympathique. Mais derrière ce sourire se cache quelqu'un qui se nourrit de la faiblesse des autres.`, mg:(n)=>`${n} miseho ho olona tsara izy voalohany. Fa ao ambadiky io fitombenana io, olona mivelona amin'ny fahalemen'ny hafa.`, en:(n)=>`${n} seems charming at first glance. But behind that smile hides someone who feeds on others' weaknesses.`, mix:(n)=>`${n} miseho ho olona tsara — très sympathique. Fa ao ambadiky io, quelqu'un de dangereux.` } }
   ],
-
-  // NOMS MALGACHES / UNIVERSELS
-  names: {
-    male: ['Rakoto','Andry','Fidy','Mahery','Tojo','Ndriana','Lanto','Hery','Mamy','Tsiry','Zo','Rado','Ny Aina'],
-    female: ['Niry','Lalao','Fanja','Voahangy','Miora','Tsanta','Rojo','Hanta','Malala','Vonintsoa','Zo','Aina']
-  },
-
-  // THÈMES PAR MOT-CLÉ
+  names: { male:['Rakoto','Andry','Fidy','Mahery','Tojo','Ndriana','Lanto','Hery','Mamy','Tsiry','Zo','Rado','Ny Aina'], female:['Niry','Lalao','Fanja','Voahangy','Miora','Tsanta','Rojo','Hanta','Malala','Vonintsoa','Zo','Aina'] },
   themeMap: {
-    argent: { theme:'L\'appât du gain', lesson:'La richesse mal acquise détruit plus qu\'elle ne construit.', citation:'Ny harena tsy marina dia tahaka ny rano amin\'ny harona.' },
-    richesse: { theme:'L\'appât du gain', lesson:'La vraie richesse se mesure à ce qu\'on laisse, pas à ce qu\'on accumule.', citation:'L\'argent est un bon serviteur mais un mauvais maître.' },
-    études: { theme:'Le sacrifice de l\'éducation', lesson:'Chaque diplôme abandonné est une porte fermée pour toujours.', citation:'Ny fahalalana dia rakitra tsy azo hangalariana.' },
-    mariage: { theme:'La pression sociale', lesson:'Les décisions prises sous pression mènent à des regrets éternels.', citation:'Aza manambady olona mba hahafaly ny hafa, fa mba hahafaly ny tenanao.' },
-    trahison: { theme:'La loyauté mise à l\'épreuve', lesson:'La trahison révèle qui nous sommes vraiment, pas qui trahit.', citation:'Ny namana marina dia hita amin\'ny andro mafy.' },
-    amis: { theme:'La valeur de l\'amitié vraie', lesson:'Un seul ami vrai vaut mieux que cent connaissances.', citation:'Aleo namana iray marina noho ny namana arivo sandoka.' },
-    tradition: { theme:'Héritage et modernité', lesson:'Respecter ses racines ne signifie pas refuser de grandir.', citation:'Ny tsy mahalala ny niaviany dia tsy hahalala izay alehany.' },
-    famille: { theme:'Le poids de la famille', lesson:'La famille est un ancre — elle peut nous stabiliser ou nous noyer si on ne la gère pas.', citation:'Ny fianakaviana dia hery lehibe raha mitambatra.' },
-    réussite: { theme:'Le chemin du succès', lesson:'Le succès sans valeurs est un château de sable.', citation:'Ny voninahitra tsy azo amin\'ny marina dia manjavona haingana.' },
-    valeurs: { theme:'L\'intégrité sous pression', lesson:'Ce qu\'on fait quand personne ne regarde définit vraiment qui on est.', citation:'Ny tena maha-olona dia hita amin\'ny tsiambaratelon\'ny fo.' },
-    default: { theme:'Le dilemme humain', lesson:'Chaque choix difficile est une opportunité de révéler la meilleure version de soi.', citation:'Ny fiainana dia fitokanana hatrany — ny tena olona dia hita amin\'ny safidy sarotra.' }
+    argent:{ theme:"L'appât du gain", lesson:"La richesse mal acquise détruit plus qu'elle ne construit.", citation:"Ny harena tsy marina dia tahaka ny rano amin'ny harona." },
+    richesse:{ theme:"L'appât du gain", lesson:"La vraie richesse se mesure à ce qu'on laisse, pas à ce qu'on accumule.", citation:"L'argent est un bon serviteur mais un mauvais maître." },
+    études:{ theme:"Le sacrifice de l'éducation", lesson:"Chaque diplôme abandonné est une porte fermée pour toujours.", citation:"Ny fahalalana dia rakitra tsy azo hangalariana." },
+    mariage:{ theme:"La pression sociale", lesson:"Les décisions prises sous pression mènent à des regrets éternels.", citation:"Aza manambady olona mba hahafaly ny hafa, fa mba hahafaly ny tenanao." },
+    trahison:{ theme:"La loyauté mise à l'épreuve", lesson:"La trahison révèle qui nous sommes vraiment, pas qui trahit.", citation:"Ny namana marina dia hita amin'ny andro mafy." },
+    amis:{ theme:"La valeur de l'amitié vraie", lesson:"Un seul ami vrai vaut mieux que cent connaissances.", citation:"Aleo namana iray marina noho ny namana arivo sandoka." },
+    tradition:{ theme:"Héritage et modernité", lesson:"Respecter ses racines ne signifie pas refuser de grandir.", citation:"Ny tsy mahalala ny niaviany dia tsy hahalala izay alehany." },
+    famille:{ theme:"Le poids de la famille", lesson:"La famille est un ancre — elle stabilise ou noie si on ne la gère pas.", citation:"Ny fianakaviana dia hery lehibe raha mitambatra." },
+    réussite:{ theme:"Le chemin du succès", lesson:"Le succès sans valeurs est un château de sable.", citation:"Ny voninahitra tsy azo amin'ny marina dia manjavona haingana." },
+    valeurs:{ theme:"L'intégrité sous pression", lesson:"Ce qu'on fait quand personne ne regarde définit vraiment qui on est.", citation:"Ny tena maha-olona dia hita amin'ny tsiambaratelon'ny fo." },
+    default:{ theme:"Le dilemme humain", lesson:"Chaque choix difficile est une opportunité de révéler la meilleure version de soi.", citation:"Ny fiainana dia fitokanana hatrany — ny tena olona dia hita amin'ny safidy sarotra." }
   },
-
-  // STRUCTURES NARRATIVES
   narratives: {
     fr: {
-      act1: [
-        (p,t) => `${p.main.name} mène une vie ordinaire dans son quartier d'Antananarivo. ${t.theme} s'invite dans sa vie un matin ordinaire, bouleversant tout ce qu'il croyait savoir sur lui-même.`,
-        (p,t) => `Tout semblait aller bien pour ${p.main.name}. Mais une rencontre inattendue va mettre à l'épreuve ses convictions les plus profondes. ${t.theme} — voilà ce à quoi il doit maintenant faire face.`,
-        (p,t) => `${p.main.name} connaît les règles. Il a été élevé dans les valeurs. Mais aujourd'hui, la réalité de la vie frappe à sa porte et lui pose une question à laquelle il n'a jamais eu à répondre : que ferait-il face à ${t.theme.toLowerCase()} ?`
-      ],
-      act2: [
-        (p,t) => `La tentation est là, concrète, accessible. ${p.villain ? p.villain.name + ' lui tend une main que tout le monde autour de lui voudrait saisir.' : 'Les circonstances lui offrent une sortie facile.'} ${p.friend ? p.friend.name + ' observe en silence, les yeux remplis d\'inquiétude.' : 'Mais au fond de lui, une voix murmure que quelque chose ne va pas.'} Le dilemme ronge ${p.main.name} de l'intérieur.`,
-        (p,t) => `${p.main.name} se retrouve à la croisée des chemins. D'un côté, la voie facile qui résoudrait tout — immédiatement. De l'autre, le chemin long et douloureux de l'honnêteté. ${p.mentor ? p.mentor.name + ' avait averti : « Les raccourcis ont toujours un prix. »' : 'Mais qui choisit la difficulté quand la facilité est à portée de main ?'} La question le dévore.`,
-        (p,t) => `Les jours passent et la pression monte. ${p.villain ? p.villain.name + ' revient, plus insistant, promettant monts et merveilles.' : 'Les opportunités semblent s\'évaporer une à une.'} ${p.main.name} commence à céder — juste un peu, juste pour voir. Mais « juste un peu » est le début de tous les naufdrages.`
-      ],
-      act3: [
-        (p,t) => `La conséquence arrive, inévitable. Pas comme une punition du ciel, mais comme la logique implacable de la vie. ${p.main.name} comprend — trop tard, ou juste à temps — que ${t.lesson.toLowerCase()} C'est dans cette douleur lucide qu'il trouve enfin qui il veut vraiment être.`,
-        (p,t) => `${p.mentor ? p.mentor.name + ' n\'avait pas tort.' : 'Les anciens avaient raison.'} ${p.main.name} regarde le chemin parcouru et voit clairement l'erreur. Mais cette clarté est un cadeau. Il se relève — plus fort, plus sage, plus lui-même. ${t.lesson}`,
-        (p,t) => `Ce n'est pas la chute qui définit ${p.main.name}. C'est le choix qu'il fait après. Avec humilité, avec courage, il choisit de recommencer autrement. Et dans ce recommencement, il découvre que ${t.lesson.toLowerCase()}`
-      ]
+      a1:[(p,t)=>`${p.main.name} mène une vie ordinaire à Antananarivo. ${t.theme} s'invite dans sa vie un matin ordinaire, bouleversant tout ce qu'il croyait savoir sur lui-même.`,(p,t)=>`Tout semblait aller bien pour ${p.main.name}. Mais une rencontre inattendue va mettre à l'épreuve ses convictions les plus profondes. ${t.theme} — voilà ce à quoi il doit maintenant faire face.`,(p,t)=>`${p.main.name} connaît les règles. Il a été élevé dans les valeurs. Mais aujourd'hui, la vie frappe à sa porte avec une question à laquelle il n'a jamais eu à répondre : que ferait-il face à ${t.theme.toLowerCase()} ?`],
+      a2:[(p,t)=>`La tentation est là, concrète, accessible. ${p.villain?p.villain.name+' lui tend une main que tout le monde voudrait saisir.':'Les circonstances lui offrent une sortie facile.'} ${p.friend?p.friend.name+' observe en silence, les yeux remplis d\'inquiétude.':'Mais au fond de lui, une voix murmure que quelque chose ne va pas.'} Le dilemme ronge ${p.main.name} de l'intérieur.`,(p,t)=>`${p.main.name} se retrouve à la croisée des chemins. D'un côté la voie facile qui résoudrait tout — immédiatement. De l'autre, le chemin de l'honnêteté. ${p.mentor?p.mentor.name+' avait averti : « Les raccourcis ont toujours un prix. »':'Mais qui choisit la difficulté quand la facilité est à portée de main ?'}`,(p,t)=>`Les jours passent et la pression monte. ${p.villain?p.villain.name+' revient, plus insistant, promettant monts et merveilles.':'Les opportunités semblent s\'évaporer.'} ${p.main.name} commence à céder — juste un peu. Mais « juste un peu » est le début de tous les naufrages.`],
+      a3:[(p,t)=>`La conséquence arrive, inévitable. Pas comme une punition, mais comme la logique implacable de la vie. ${p.main.name} comprend — trop tard, ou juste à temps — que ${t.lesson.toLowerCase()} C'est dans cette douleur qu'il trouve enfin qui il veut vraiment être.`,(p,t)=>`${p.mentor?p.mentor.name+' n\'avait pas tort.':'Les anciens avaient raison.'} ${p.main.name} regarde le chemin parcouru et voit clairement l'erreur. Mais cette clarté est un cadeau. Il se relève — plus fort, plus sage. ${t.lesson}`,(p,t)=>`Ce n'est pas la chute qui définit ${p.main.name}. C'est le choix qu'il fait après. Avec humilité et courage, il choisit de recommencer autrement. Et dans ce recommencement, il découvre que ${t.lesson.toLowerCase()}`]
     },
     mg: {
-      act1: [
-        (p,t) => `${p.main.name} dia miaina ny fiainany andavanandro ao Antananarivo. Indray maraina, ny ${t.theme} dia miditra ao amin'ny fiainany ka manamboatra ny zavatra rehetra nino azy tena.`,
-        (p,t) => `Tsara ny zavatra rehetra ho an'i ${p.main.name}. Nefa ny fihaonana tsy nampoizina iray dia hijery ny finoany lalina. ${t.theme} — izany no asany ankehitriny.`,
-        (p,t) => `Mahalala ny fitsipika ${p.main.name}. Nentina tamin'ny soatoavina izy. Nefa anio, ny zava-misy amin'ny fiainana dia mandondòna ny varavarana ka manontany azy: inona no hataony raha ny ${t.theme.toLowerCase()} ?`
-      ],
-      act2: [
-        (p,t) => `Eto ny fakam-panahy, hita maso, azo tratrarina. ${p.villain ? p.villain.name + ' dia manome tanana izay iriny ny olona rehetra manodidina azy.' : 'Ny toe-javatra dia manolotra lalan-kala mora.'} ${p.friend ? p.friend.name + ' mijery am-pahanginana, masondranomasony feno ahiahy.' : 'Fa ao anatiny, misy feo mikoropoka hoe misy tsy mety.'} Ny fisafidianana dia mihinana an\'i ${p.main.name} avy ao anatiny.`,
-        (p,t) => `${p.main.name} dia miatrika ny fijanonan-dalana. Amin'ny lafiny iray, ny lalana mora izay hamaritra ny zavatra rehetra — avy hatrany. Amin'ny lafiny hafa, ny lalana lava sy mafy amin'ny fahamarinana. ${p.mentor ? p.mentor.name + ' efa nampitandrina: « Ny lalana fohy dia manana vidiny hatrany. »' : 'Fa iza no misafidy ny fahasarotana raha ny mora eo am-pelatanana ?'}`,
-        (p,t) => `Mandalo ny andro ary miakatra ny tsindry. ${p.villain ? p.villain.name + ' manody indray, maharitra kokoa, mampanantena ny zavatra tsara rehetra.' : 'Ny fahafahana dia toa mandositra iray am-piray.'} ${p.main.name} dia manomboka manaiky — kely foana, jerena foana. Fa "kely foana" no fiantombohan'ny faharavana rehetra.`
-      ],
-      act3: [
-        (p,t) => `Tonga ny vokatr'izany, tsy azo ialana. Tsy toy ny sazin'ny lanitra, fa toy ny lojikan'ny fiainana tsy azo tohaina. ${p.main.name} dia mahazo — diso fotoana, na amin'ny fotoana mety — fa ${t.lesson.toLowerCase()} Ao amin'io fangirifiriana mazava io no ahitany farany izay tianay ho izy marina.`,
-        (p,t) => `${p.mentor ? p.mentor.name + ' tsy diso.' : 'Marina ny ray aman-dreny.'} ${p.main.name} dia mijery ny lalana nodiavina ka mahita mazava ny lesoka. Nefa io mazava io dia fanomezana. Mitsangana indray izy — mahery kokoa, hendry kokoa, izy tena kokoa. ${t.lesson}`,
-        (p,t) => `Tsy ny faharavan'i ${p.main.name} no mamaritra azy. Fa ny safidy ataony aorian'izany. Amin'ny fanetren-tena sy ny herim-po, misafidy hianatra indray amin'ny fomba hafa izy. Ary ao amin'io fanombohana indray io, hahita izy fa ${t.lesson.toLowerCase()}`
-      ]
+      a1:[(p,t)=>`${p.main.name} dia miaina ny fiainany andavanandro ao Antananarivo. Indray maraina, ny ${t.theme} dia miditra ao amin'ny fiainany ka manamboatra ny zavatra rehetra nino azy tena.`,(p,t)=>`Tsara ny zavatra rehetra ho an'i ${p.main.name}. Nefa ny fihaonana tsy nampoizina iray dia hijery ny finoany lalina. ${t.theme} — izany no asany ankehitriny.`,(p,t)=>`Mahalala ny fitsipika ${p.main.name}. Nentina tamin'ny soatoavina izy. Nefa anio, ny fiainana dia mandondòna ny varavarana : inona no hataony raha ny ${t.theme.toLowerCase()} ?`],
+      a2:[(p,t)=>`Eto ny fakam-panahy, hita maso, azo tratrarina. ${p.villain?p.villain.name+' dia manome tanana izay iriny ny olona rehetra.':'Ny toe-javatra dia manolotra lalan-kala mora.'} ${p.friend?p.friend.name+' mijery am-pahanginana, masondranomasony feno ahiahy.':'Fa ao anatiny, misy feo mikoropoka hoe misy tsy mety.'} Ny fisafidianana dia mihinana an\'i ${p.main.name} avy ao anatiny.`,(p,t)=>`${p.main.name} dia miatrika ny fijanonan-dalana. Ny lalana mora amin'ny lafiny iray. Ny lalana fahamarinana amin'ny lafiny hafa. ${p.mentor?p.mentor.name+' efa nampitandrina: « Ny lalana fohy dia manana vidiny hatrany. »':'Fa iza no misafidy ny fahasarotana raha ny mora eo am-pelatanana ?'}`,(p,t)=>`Mandalo ny andro ary miakatra ny tsindry. ${p.villain?p.villain.name+' manody indray, maharitra kokoa.':'Ny fahafahana dia toa mandositra iray am-piray.'} ${p.main.name} dia manomboka manaiky — kely foana. Fa « kely foana » no fiantombohan'ny faharavana rehetra.`],
+      a3:[(p,t)=>`Tonga ny vokatr'izany, tsy azo ialana. ${p.main.name} dia mahazo — diso fotoana, na amin'ny fotoana mety — fa ${t.lesson.toLowerCase()} Ao amin'io fangirifiriana mazava io no ahitany farany izay tianay ho izy marina.`,(p,t)=>`${p.mentor?p.mentor.name+' tsy diso.':'Marina ny ray aman-dreny.'} ${p.main.name} dia mijery ny lalana nodiavina ka mahita mazava ny lesoka. Nefa io mazava io dia fanomezana. Mitsangana indray izy — mahery kokoa, hendry kokoa. ${t.lesson}`,(p,t)=>`Tsy ny faharavan'i ${p.main.name} no mamaritra azy. Fa ny safidy ataony aorian'izany. Amin'ny fanetren-tena sy ny herim-po, misafidy hianatra indray amin'ny fomba hafa izy. Ary ao amin'io fanombohana io, hahita izy fa ${t.lesson.toLowerCase()}`]
     },
     en: {
-      act1: [
-        (p,t) => `${p.main.name} lives an ordinary life in Antananarivo. ${t.theme} walks into his world one unremarkable morning, shaking everything he thought he knew about himself.`,
-        (p,t) => `Everything seemed fine for ${p.main.name}. Then an unexpected encounter tests his deepest convictions. ${t.theme} — that is what he must now face head on.`,
-        (p,t) => `${p.main.name} knows the rules. He was raised on values. But today, life knocks on his door with a question he has never had to answer: what would he do when faced with ${t.theme.toLowerCase()} ?`
-      ],
-      act2: [
-        (p,t) => `The temptation is real, concrete, within reach. ${p.villain ? p.villain.name + ' offers a hand that everyone around him would gladly take.' : 'Circumstances offer an easy way out.'} ${p.friend ? p.friend.name + ' watches in silence, eyes full of worry.' : 'But deep inside, a voice whispers that something is wrong.'} The dilemma is eating ${p.main.name} alive.`,
-        (p,t) => `${p.main.name} stands at the crossroads. On one side — the easy path that solves everything instantly. On the other, the long honest road. ${p.mentor ? p.mentor.name + ' had warned: "Shortcuts always come with a price."' : 'But who chooses the hard way when easy is right there ?'} The question devours him.`,
-        (p,t) => `Days pass and pressure builds. ${p.villain ? p.villain.name + ' returns, more insistent, promising the world.' : 'Opportunities seem to slip away one by one.'} ${p.main.name} starts to give in — just a little, just to see. But "just a little" is how all shipwrecks begin.`
-      ],
-      act3: [
-        (p,t) => `Consequences arrive, inevitable. Not as heavenly punishment but as the relentless logic of life. ${p.main.name} understands — too late, or just in time — that ${t.lesson.toLowerCase()} In that lucid pain, he finally finds who he truly wants to be.`,
-        (p,t) => `${p.mentor ? p.mentor.name + ' was not wrong.' : 'The elders were right.'} ${p.main.name} looks back at the road he walked and sees the mistake clearly. But that clarity is a gift. He rises — stronger, wiser, more himself. ${t.lesson}`,
-        (p,t) => `It is not the fall that defines ${p.main.name}. It is the choice he makes after. With humility and courage, he chooses to start again differently. In that new beginning, he discovers that ${t.lesson.toLowerCase()}`
-      ]
+      a1:[(p,t)=>`${p.main.name} lives an ordinary life in Antananarivo. ${t.theme} walks into his world one morning, shaking everything he thought he knew about himself.`,(p,t)=>`Everything seemed fine for ${p.main.name}. Then an unexpected encounter tests his deepest convictions. ${t.theme} — that is what he must now face.`,(p,t)=>`${p.main.name} knows the rules. He was raised on values. But today, life knocks with a question he has never had to answer: what would he do when faced with ${t.theme.toLowerCase()} ?`],
+      a2:[(p,t)=>`The temptation is real, concrete, within reach. ${p.villain?p.villain.name+' offers a hand that everyone around him would gladly take.':'Circumstances offer an easy way out.'} ${p.friend?p.friend.name+' watches in silence, eyes full of worry.':'But deep inside, a voice whispers that something is wrong.'} The dilemma is eating ${p.main.name} alive.`,(p,t)=>`${p.main.name} stands at the crossroads. On one side the easy path. On the other, the honest road. ${p.mentor?p.mentor.name+' had warned: "Shortcuts always come with a price."':'But who chooses the hard way when easy is right there ?'}`,(p,t)=>`Days pass and pressure builds. ${p.villain?p.villain.name+' returns, more insistent.':'Opportunities seem to slip away.'} ${p.main.name} starts to give in — just a little. But "just a little" is how all shipwrecks begin.`],
+      a3:[(p,t)=>`Consequences arrive, inevitable. Not as punishment but as the relentless logic of life. ${p.main.name} understands — too late, or just in time — that ${t.lesson.toLowerCase()} In that lucid pain, he finally finds who he truly wants to be.`,(p,t)=>`${p.mentor?p.mentor.name+' was not wrong.':'The elders were right.'} ${p.main.name} looks back and sees the mistake clearly. But that clarity is a gift. He rises — stronger, wiser. ${t.lesson}`,(p,t)=>`It is not the fall that defines ${p.main.name}. It is the choice he makes after. With humility and courage, he chooses to start again differently. In that new beginning, he discovers that ${t.lesson.toLowerCase()}`]
     },
     mix: {
-      act1: [
-        (p,t) => `${p.main.name} miaina ny fiainany andavanandro ao Antananarivo. Nefa indray maraina, ${t.theme} dia miditra ao amin'ny fiainany — bouleversant tout ce qu'il croyait savoir.`,
-        (p,t) => `Tout semblait bien aller ho an'i ${p.main.name}. Nefa ny fihaonana tsy nampoizina iray dia hijery ny finoany lalina. ${t.theme} — izany no asany ankehitriny.`,
-        (p,t) => `${p.main.name} mahalala ny fitsipika. Nentina tamin'ny soatoavina izy. Mais aujourd'hui, la vie frappe à sa porte avec une question : inona no hataony raha ny ${t.theme.toLowerCase()} ?`
-      ],
-      act2: [
-        (p,t) => `La tentation est là, concrete, azo tratrarina. ${p.villain ? p.villain.name + ' dia manome tanana — une main que tout le monde voudrait saisir.' : 'Les circonstances manolotra lalan-kala mora.'} Le dilemme ronge an'i ${p.main.name} avy ao anatiny.`,
-        (p,t) => `${p.main.name} se retrouve à la croisée des chemins — fijanonan-dalana. D'un côté ny mora. De l'autre ny marina. ${p.mentor ? p.mentor.name + ' efa nampitandrina: « Les raccourcis ont toujours un prix. »' : 'Nefa iza no misafidy ny fahasarotana ?'}`,
-        (p,t) => `Mandalo ny andro ary ny tsindry miakatra. ${p.villain ? p.villain.name + ' revient — plus insistant, mampanantena ny zavatra tsara rehetra.' : 'Les opportunités toa mandositra.'} ${p.main.name} commence à céder — kely foana. Fa "kely foana" no fiantombohan'ny faharavana rehetra.`
-      ],
-      act3: [
-        (p,t) => `La conséquence tonga, tsy azo ialana. ${p.main.name} comprend — farany — fa ${t.lesson.toLowerCase()} Ao amin'io fangirifiriana io no ahitany farany izay tianay ho izy marina.`,
-        (p,t) => `${p.mentor ? p.mentor.name + ' tsy diso.' : 'Les anciens avaient raison.'} ${p.main.name} regarde en arrière ka mahita mazava ny lesoka. Nefa cette clarté est un cadeau. Mitsangana indray izy — plus fort, plus sage. ${t.lesson}`,
-        (p,t) => `Tsy ny faharavan'i ${p.main.name} no mamaritra azy. C'est le choix qu'il fait après. Amin'ny fanetren-tena sy ny herim-po, il choisit de recommencer. Ary ao amin'io fanombohana io, hahita izy fa ${t.lesson.toLowerCase()}`
-      ]
+      a1:[(p,t)=>`${p.main.name} miaina ny fiainany andavanandro ao Antananarivo. Nefa indray maraina, ${t.theme} dia miditra ao amin'ny fiainany — bouleversant tout ce qu'il croyait savoir.`,(p,t)=>`Tout semblait bien aller ho an'i ${p.main.name}. Nefa ny fihaonana tsy nampoizina iray dia hijery ny finoany lalina. ${t.theme} — izany no asany ankehitriny.`,(p,t)=>`${p.main.name} mahalala ny fitsipika. Nentina tamin'ny soatoavina izy. Mais aujourd'hui, la vie frappe à sa porte : inona no hataony raha ny ${t.theme.toLowerCase()} ?`],
+      a2:[(p,t)=>`La tentation est là, concrete, azo tratrarina. ${p.villain?p.villain.name+' dia manome tanana — une main que tout le monde voudrait saisir.':'Les circonstances manolotra lalan-kala mora.'} Le dilemme ronge an\'i ${p.main.name} avy ao anatiny.`,(p,t)=>`${p.main.name} se retrouve à la croisée des chemins — fijanonan-dalana. D'un côté ny mora. De l'autre ny fahamarinana. ${p.mentor?p.mentor.name+' efa nampitandrina: « Les raccourcis ont toujours un prix. »':'Nefa iza no misafidy ny fahasarotana ?'}`,(p,t)=>`Mandalo ny andro ary ny tsindry miakatra. ${p.villain?p.villain.name+' revient — plus insistant.':'Les opportunités toa mandositra.'} ${p.main.name} commence à céder — kely foana. Fa « kely foana » no fiantombohan'ny faharavana rehetra.`],
+      a3:[(p,t)=>`La conséquence tonga, tsy azo ialana. ${p.main.name} comprend — farany — fa ${t.lesson.toLowerCase()} Ao amin'io fangirifiriana io no ahitany farany izay tianay ho izy marina.`,(p,t)=>`${p.mentor?p.mentor.name+' tsy diso.':'Les anciens avaient raison.'} ${p.main.name} regarde en arrière ka mahita mazava ny lesoka. Nefa cette clarté est un cadeau. Mitsangana indray izy — plus fort, plus sage. ${t.lesson}`,(p,t)=>`Tsy ny faharavan'i ${p.main.name} no mamaritra azy. C'est le choix qu'il fait après. Amin'ny fanetren-tena sy ny herim-po, il choisit de recommencer. Ary ao amin'io fanombohana io, hahita izy fa ${t.lesson.toLowerCase()}`]
     }
   },
-
-  // DIALOGUES PAR ARCHÉTYPE
-  dialogueTemplates: {
+  dialogues: {
     fr: {
-      dilemme: [
-        (p,t) => [
-          { speaker: p.villain?.name || 'L\'Inconnu', cls:'p2', text: `Écoute, ${p.main.name}. Le monde ne récompense pas les gens bien. Il récompense les gens malins.` },
-          { speaker: p.main.name, cls:'p1', text: `Mais ce que tu proposes... c'est pas honnête.` },
-          { speaker: p.villain?.name || 'L\'Inconnu', cls:'p2', text: `Honnête ? Tu crois que ceux qui réussissent pensent à l'honnêteté ? Regarde autour de toi.` },
-          { speaker: p.main.name, cls:'p1', text: `... (silence)` },
-          { speaker: p.friend?.name || 'L\'Ami', cls:'p3', text: `${p.main.name}, méfie-toi. Les portes qui s'ouvrent trop facilement mènent souvent à des pièges.` },
-          { speaker: p.main.name, cls:'p1', text: `Je sais. Mais j'en peux plus d'attendre que la chance arrive toute seule.` }
-        ],
-        (p,t) => [
-          { speaker: p.main.name, cls:'p1', text: `${p.mentor?.name || 'Le sage'}, j'ai une opportunité. Mais... elle n'est pas très propre.` },
-          { speaker: p.mentor?.name || 'Le Sage', cls:'p2', text: `Dis-moi : est-ce que tu pourrais en parler fièrement à ta mère ?` },
-          { speaker: p.main.name, cls:'p1', text: `Non. Mais elle n'a pas besoin de savoir...` },
-          { speaker: p.mentor?.name || 'Le Sage', cls:'p2', text: `C'est précisément là que tout commence à se dégrader, mon fils.` },
-          { speaker: p.main.name, cls:'p1', text: `Tu ne comprends pas. J'ai besoin de cet argent. J'ai besoin de cette chance.` },
-          { speaker: p.mentor?.name || 'Le Sage', cls:'p2', text: `Je comprends la faim. Ce que je ne comprends pas, c'est pourquoi tu veux te nourrir de poison.` }
-        ]
-      ],
-      revelation: [
-        (p,t) => [
-          { speaker: 'Narrateur', cls:'narr', text: `(Quelques semaines plus tard. ${p.main.name} contemple les conséquences de ses choix.)` },
-          { speaker: p.main.name, cls:'p1', text: `J'ai tout eu. L'argent, le confort... et pourtant je me sens vide.` },
-          { speaker: p.friend?.name || 'L\'Ami', cls:'p3', text: `Tu sais pourquoi ? Parce que ce que tu as obtenu n'est pas à toi. C'est une dette que tu portes.` },
-          { speaker: p.main.name, cls:'p1', text: `J'aurais dû t'écouter.` },
-          { speaker: p.friend?.name || 'L\'Ami', cls:'p3', text: `Non. Tu devais apprendre ça toi-même. La question maintenant : qu'est-ce que tu fais avec cette leçon ?` },
-          { speaker: p.main.name, cls:'p1', text: `Je recommence. Autrement. Pour de vrai cette fois.` }
-        ],
-        (p,t) => [
-          { speaker: p.mentor?.name || 'Le Sage', cls:'p2', text: `Tu es revenu. Je savais que tu reviendrais.` },
-          { speaker: p.main.name, cls:'p1', text: `Tu avais raison sur tout. Je n'ai pas voulu t'entendre.` },
-          { speaker: p.mentor?.name || 'Le Sage', cls:'p2', text: `Ce n'est pas pour avoir raison que je t'ai parlé. C'est parce que je voyais en toi quelqu'un qui méritait mieux.` },
-          { speaker: p.main.name, cls:'p1', text: `Et maintenant ? Comment je répare ce que j'ai cassé ?` },
-          { speaker: p.mentor?.name || 'Le Sage', cls:'p2', text: `Tu commences là où tu es. Avec ce que tu as. Aujourd'hui.` },
-          { speaker: 'Narrateur', cls:'narr', text: `(Et pour la première fois depuis longtemps, ${p.main.name} se sentit léger.)` }
-        ]
-      ]
+      d1:[(p)=>[{s:p.villain?.name||"L'Inconnu",c:'p2',t:`Écoute, ${p.main.name}. Le monde ne récompense pas les gens bien. Il récompense les gens malins.`},{s:p.main.name,c:'p1',t:`Mais ce que tu proposes... c'est pas honnête.`},{s:p.villain?.name||"L'Inconnu",c:'p2',t:`Honnête ? Tu crois que ceux qui réussissent pensent à l'honnêteté ? Regarde autour de toi.`},{s:p.main.name,c:'p1',t:`... (silence)`},{s:p.friend?.name||"L'Ami",c:'p3',t:`${p.main.name}, méfie-toi. Les portes qui s'ouvrent trop facilement mènent souvent à des pièges.`},{s:p.main.name,c:'p1',t:`Je sais. Mais j'en peux plus d'attendre que la chance arrive toute seule.`}],(p)=>[{s:p.main.name,c:'p1',t:`${p.mentor?.name||'Le Sage'}, j'ai une opportunité. Mais... elle n'est pas très propre.`},{s:p.mentor?.name||'Le Sage',c:'p2',t:`Dis-moi : est-ce que tu pourrais en parler fièrement à ta mère ?`},{s:p.main.name,c:'p1',t:`Non. Mais elle n'a pas besoin de savoir...`},{s:p.mentor?.name||'Le Sage',c:'p2',t:`C'est précisément là que tout commence à se dégrader, mon fils.`},{s:p.main.name,c:'p1',t:`J'ai besoin de cet argent. J'ai besoin de cette chance.`},{s:p.mentor?.name||'Le Sage',c:'p2',t:`Je comprends la faim. Ce que je ne comprends pas, c'est pourquoi tu veux te nourrir de poison.`}]],
+      d2:[(p)=>[{s:'Narrateur',c:'narr',t:`(Quelques semaines plus tard. ${p.main.name} contemple les conséquences de ses choix.)`},{s:p.main.name,c:'p1',t:`J'ai tout eu. L'argent, le confort... et pourtant je me sens vide.`},{s:p.friend?.name||"L'Ami",c:'p3',t:`Tu sais pourquoi ? Parce que ce que tu as obtenu n'est pas à toi. C'est une dette que tu portes.`},{s:p.main.name,c:'p1',t:`J'aurais dû t'écouter.`},{s:p.friend?.name||"L'Ami",c:'p3',t:`Non. Tu devais apprendre ça toi-même. La question maintenant : qu'est-ce que tu fais avec cette leçon ?`},{s:p.main.name,c:'p1',t:`Je recommence. Autrement. Pour de vrai cette fois.`}],(p)=>[{s:p.mentor?.name||'Le Sage',c:'p2',t:`Tu es revenu. Je savais que tu reviendrais.`},{s:p.main.name,c:'p1',t:`Tu avais raison sur tout. Je n'ai pas voulu t'entendre.`},{s:p.mentor?.name||'Le Sage',c:'p2',t:`Ce n'est pas pour avoir raison que je t'ai parlé. C'est parce que je voyais en toi quelqu'un qui méritait mieux.`},{s:p.main.name,c:'p1',t:`Comment je répare ce que j'ai cassé ?`},{s:p.mentor?.name||'Le Sage',c:'p2',t:`Tu commences là où tu es. Avec ce que tu as. Aujourd'hui.`},{s:'Narrateur',c:'narr',t:`(Et pour la première fois depuis longtemps, ${p.main.name} se sentit léger.)`}]]
     },
     mg: {
-      dilemme: [
-        (p,t) => [
-          { speaker: p.villain?.name || 'Ilay Olona', cls:'p2', text: `Henoy, ${p.main.name}. Ny tontolo tsy manome valisoa ny olona tsara fo. Ny olona hendry no valisiany.` },
-          { speaker: p.main.name, cls:'p1', text: `Fa izay atolotrao... tsy marina izany.` },
-          { speaker: p.villain?.name || 'Ilay Olona', cls:'p2', text: `Marina ? Hianao ve mino fa ny olona mahomby dia mihevitra ny amin'ny fahamarinana ? Jereo ny manodidina anao.` },
-          { speaker: p.main.name, cls:'p1', text: `... (mangina)` },
-          { speaker: p.friend?.name || 'Ny Namana', cls:'p3', text: `${p.main.name}, mitandrema. Ny varavarana misokatra mora loatra matetika dia mitondra fandrika.` },
-          { speaker: p.main.name, cls:'p1', text: `Fantatro. Nefa tsy zakako intsony ny fiandrasana ny vintana ho avy irery.` }
-        ]
-      ],
-      revelation: [
-        (p,t) => [
-          { speaker: 'Mpitantara', cls:'narr', text: `(Hevik maro avy eo. Noheverin'i ${p.main.name} ny vokatr'ny safidintsika.)` },
-          { speaker: p.main.name, cls:'p1', text: `Nahazo ny zavatra rehetra aho. Ny vola, ny fifahana... nefa tsapako fa foana ao anatiko.` },
-          { speaker: p.friend?.name || 'Ny Namana', cls:'p3', text: `Fantatrao ny antony ? Satria izay azoanao dia tsy anao marina. Trosa izany entinao.` },
-          { speaker: p.main.name, cls:'p1', text: `Tokony nihaino anao aho.` },
-          { speaker: p.friend?.name || 'Ny Namana', cls:'p3', text: `Tsia. Ilainao ny nianatra izany ho anao manokana. Ny fanontaniana ankehitriny: inona no ataonao amin'ity lesona ity ?` },
-          { speaker: p.main.name, cls:'p1', text: `Manomboka indray aho. Amin'ny fomba hafa. Marina amin'izao fotoana izao.` }
-        ]
-      ]
+      d1:[(p)=>[{s:p.villain?.name||'Ilay Olona',c:'p2',t:`Henoy, ${p.main.name}. Ny tontolo tsy manome valisoa ny olona tsara fo. Ny olona hendry no valisiany.`},{s:p.main.name,c:'p1',t:`Fa izay atolotrao... tsy marina izany.`},{s:p.villain?.name||'Ilay Olona',c:'p2',t:`Marina ? Hianao ve mino fa ny olona mahomby dia mihevitra ny amin'ny fahamarinana ?`},{s:p.main.name,c:'p1',t:`... (mangina)`},{s:p.friend?.name||'Ny Namana',c:'p3',t:`${p.main.name}, mitandrema. Ny varavarana misokatra mora loatra matetika dia mitondra fandrika.`},{s:p.main.name,c:'p1',t:`Fantatro. Nefa tsy zakako intsony ny fiandrasana ny vintana ho avy irery.`}]],
+      d2:[(p)=>[{s:'Mpitantara',c:'narr',t:`(Hevik maro avy eo. Noheverin'i ${p.main.name} ny vokatr'ny safidintsika.)`},{s:p.main.name,c:'p1',t:`Nahazo ny zavatra rehetra aho. Ny vola, ny fifahana... nefa tsapako fa foana ao anatiko.`},{s:p.friend?.name||'Ny Namana',c:'p3',t:`Fantatrao ny antony ? Satria izay azoanao dia tsy anao marina. Trosa izany entinao.`},{s:p.main.name,c:'p1',t:`Tokony nihaino anao aho.`},{s:p.friend?.name||'Ny Namana',c:'p3',t:`Tsia. Ilainao ny nianatra izany ho anao manokana. Ny fanontaniana ankehitriny: inona no ataonao amin'ity lesona ity ?`},{s:p.main.name,c:'p1',t:`Manomboka indray aho. Amin'ny fomba hafa. Marina amin'izao fotoana izao.`}]]
     },
     en: {
-      dilemme: [
-        (p,t) => [
-          { speaker: p.villain?.name || 'The Stranger', cls:'p2', text: `Listen, ${p.main.name}. The world doesn't reward good people. It rewards clever people.` },
-          { speaker: p.main.name, cls:'p1', text: `But what you're offering... that's not honest.` },
-          { speaker: p.villain?.name || 'The Stranger', cls:'p2', text: `Honest ? You think successful people worry about honesty ? Look around you.` },
-          { speaker: p.main.name, cls:'p1', text: `... (silence)` },
-          { speaker: p.friend?.name || 'The Friend', cls:'p3', text: `${p.main.name}, be careful. Doors that open too easily often lead to traps.` },
-          { speaker: p.main.name, cls:'p1', text: `I know. But I can't keep waiting for luck to show up on its own.` }
-        ]
-      ],
-      revelation: [
-        (p,t) => [
-          { speaker: 'Narrator', cls:'narr', text: `(Weeks later. ${p.main.name} looks at the consequences of his choices.)` },
-          { speaker: p.main.name, cls:'p1', text: `I had it all. Money, comfort... yet I feel completely empty.` },
-          { speaker: p.friend?.name || 'The Friend', cls:'p3', text: `You know why ? Because what you got is not really yours. It's a debt you carry.` },
-          { speaker: p.main.name, cls:'p1', text: `I should have listened to you.` },
-          { speaker: p.friend?.name || 'The Friend', cls:'p3', text: `No. You needed to learn this yourself. The question now: what do you do with this lesson ?` },
-          { speaker: p.main.name, cls:'p1', text: `I start over. Differently. For real this time.` }
-        ]
-      ]
+      d1:[(p)=>[{s:p.villain?.name||'The Stranger',c:'p2',t:`Listen, ${p.main.name}. The world doesn't reward good people. It rewards clever people.`},{s:p.main.name,c:'p1',t:`But what you're offering... that's not honest.`},{s:p.villain?.name||'The Stranger',c:'p2',t:`Honest ? You think successful people worry about honesty ? Look around you.`},{s:p.main.name,c:'p1',t:`... (silence)`},{s:p.friend?.name||'The Friend',c:'p3',t:`${p.main.name}, be careful. Doors that open too easily often lead to traps.`},{s:p.main.name,c:'p1',t:`I know. But I can't keep waiting for luck to show up on its own.`}]],
+      d2:[(p)=>[{s:'Narrator',c:'narr',t:`(Weeks later. ${p.main.name} looks at the consequences of his choices.)`},{s:p.main.name,c:'p1',t:`I had it all. Money, comfort... yet I feel completely empty.`},{s:p.friend?.name||'The Friend',c:'p3',t:`You know why ? Because what you got is not really yours. It's a debt you carry.`},{s:p.main.name,c:'p1',t:`I should have listened to you.`},{s:p.friend?.name||'The Friend',c:'p3',t:`No. You needed to learn this yourself. The question now: what do you do with this lesson ?`},{s:p.main.name,c:'p1',t:`I start over. Differently. For real this time.`}]]
     },
     mix: {
-      dilemme: [
-        (p,t) => [
-          { speaker: p.villain?.name || 'Ilay Olona', cls:'p2', text: `Écoute, ${p.main.name}. Ny tontolo tsy manome valisoa ny olona tsara fo. Les gens malins no valisiany.` },
-          { speaker: p.main.name, cls:'p1', text: `Mais ce que tu proposes... tsy marina izany.` },
-          { speaker: p.villain?.name || 'Ilay Olona', cls:'p2', text: `Marina ? Tu crois que ceux qui réussissent mihevitra ny fahamarinana ? Regarde autour de toi.` },
-          { speaker: p.main.name, cls:'p1', text: `... (silence)` },
-          { speaker: p.friend?.name || 'Ny Namana', cls:'p3', text: `${p.main.name}, mitandrema. Les portes qui s'ouvrent trop facilement matetika dia mitondra fandrika.` },
-          { speaker: p.main.name, cls:'p1', text: `Fantatro. Mais j'en peux plus d'attendre — tsy zakako intsony.` }
-        ]
-      ],
-      revelation: [
-        (p,t) => [
-          { speaker: 'Mpitantara', cls:'narr', text: `(Hevik maro avy eo. ${p.main.name} contemple les conséquences de ses choix.)` },
-          { speaker: p.main.name, cls:'p1', text: `Nahazo ny zavatra rehetra aho. L'argent, le confort... nefa tsapako fa foana ao anatiko.` },
-          { speaker: p.friend?.name || 'Ny Namana', cls:'p3', text: `Tu sais pourquoi ? Satria izay azoanao dia tsy anao marina. C'est une dette que tu portes.` },
-          { speaker: p.main.name, cls:'p1', text: `Tokony nihaino anao aho. J'aurais dû t'écouter.` },
-          { speaker: p.friend?.name || 'Ny Namana', cls:'p3', text: `Non. Tu devais apprendre ça toi-même. Ny fanontaniana ankehitriny: qu'est-ce que tu fais avec cette leçon ?` },
-          { speaker: p.main.name, cls:'p1', text: `Manomboka indray aho. Je recommence. Autrement. Pour de vrai cette fois.` }
-        ]
-      ]
+      d1:[(p)=>[{s:p.villain?.name||'Ilay Olona',c:'p2',t:`Écoute, ${p.main.name}. Ny tontolo tsy manome valisoa ny olona tsara fo. Les gens malins no valisiany.`},{s:p.main.name,c:'p1',t:`Mais ce que tu proposes... tsy marina izany.`},{s:p.villain?.name||'Ilay Olona',c:'p2',t:`Marina ? Tu crois que ceux qui réussissent mihevitra ny fahamarinana ? Regarde autour de toi.`},{s:p.main.name,c:'p1',t:`... (silence)`},{s:p.friend?.name||'Ny Namana',c:'p3',t:`${p.main.name}, mitandrema. Les portes qui s'ouvrent trop facilement matetika dia mitondra fandrika.`},{s:p.main.name,c:'p1',t:`Fantatro. Mais j'en peux plus — tsy zakako intsony.`}]],
+      d2:[(p)=>[{s:'Mpitantara',c:'narr',t:`(Hevik maro avy eo. ${p.main.name} contemple les conséquences de ses choix.)`},{s:p.main.name,c:'p1',t:`Nahazo ny zavatra rehetra aho. L'argent, le confort... nefa tsapako fa foana ao anatiko.`},{s:p.friend?.name||'Ny Namana',c:'p3',t:`Tu sais pourquoi ? Satria izay azoanao dia tsy anao marina. C'est une dette que tu portes.`},{s:p.main.name,c:'p1',t:`Tokony nihaino anao aho. J'aurais dû t'écouter.`},{s:p.friend?.name||'Ny Namana',c:'p3',t:`Non. Tu devais apprendre ça toi-même. Ny fanontaniana: qu'est-ce que tu fais avec cette leçon ?`},{s:p.main.name,c:'p1',t:`Manomboka indray aho. Je recommence. Pour de vrai cette fois.`}]]
     }
   },
-
-  // TITRES PAR LANGUE
-  titleTemplates: {
-    fr: [
-      (n,t) => `${n} face à ${t.theme} : jusqu'où iras-tu ?`,
-      (n,t) => `Le jour où ${n} a failli tout perdre`,
-      (n,t) => `Ce que ${t.theme.toLowerCase()} m'a appris sur moi-même`,
-      (n,t) => `${n} : le choix qui change tout`,
-      (n,t) => `${t.theme} — histoire d'un homme face à lui-même`
-    ],
-    mg: [
-      (n,t) => `${n} sy ny ${t.theme} : hatraiza no hankanesanao ?`,
-      (n,t) => `Ny andro saiky namely an'i ${n}`,
-      (n,t) => `Izay nampianarin'ny ${t.theme.toLowerCase()} ahy momba ny tenako`,
-      (n,t) => `${n} : ny safidy mampiova ny zavatra rehetra`,
-      (n,t) => `${t.theme} — tantaran'ny lehilahy miatrika ny tenany`
-    ],
-    en: [
-      (n,t) => `${n} vs ${t.theme}: How far will you go?`,
-      (n,t) => `The day ${n} almost lost everything`,
-      (n,t) => `What ${t.theme.toLowerCase()} taught me about myself`,
-      (n,t) => `${n}: the choice that changes everything`,
-      (n,t) => `${t.theme} — one man's face-off with himself`
-    ]
-  },
-
-  // CALENDRIER DE PUBLICATION
-  calendar: {
-    fr: (title) => [
-      { week: 'Semaine 1 — Préparation & Teasing', days: [
-        { day: 'Jour 1-2', action: `Écriture et mémorisation du scénario complet de "${title}"`, platforms: ['yt'] },
-        { day: 'Jour 3', action: 'Tournage des scènes. Lumière naturelle, micro-cravate si possible', platforms: ['yt','fb'] },
-        { day: 'Jour 4', action: 'Montage : CapCut ou DaVinci Resolve. Sous-titres obligatoires', platforms: ['yt'] },
-        { day: 'Jour 5', action: `Teaser 15 secondes — scène du dilemme uniquement, sans résolution`, platforms: ['tt','ig','fb'] },
-        { day: 'Jour 6-7', action: 'Story Instagram + Post Facebook : "Quelque chose arrive... 👀"', platforms: ['ig','fb'] }
-      ]},
-      { week: 'Semaine 2 — Lancement & Engagement', days: [
-        { day: 'Jour 8 🚀', action: `PUBLICATION PRINCIPALE : "${title}" sur YouTube (vidéo longue)`, platforms: ['yt'] },
-        { day: 'Jour 8 soir', action: `Version courte 60 sec sur TikTok + Reels Instagram + Facebook`, platforms: ['tt','ig','fb'] },
-        { day: 'Jour 9-10', action: 'Répondre à TOUS les commentaires. Épingler le meilleur', platforms: ['yt','fb','tt'] },
-        { day: 'Jour 11', action: 'Post de la leçon de vie en image (citation du scénario)', platforms: ['ig','fb'] },
-        { day: 'Jour 12-14', action: 'Sondage : quel thème voulez-vous voir en prochain épisode ?', platforms: ['ig','fb','tt'] }
-      ]}
-    ]
+  titles: {
+    fr:[(n,t)=>`${n} face à ${t.theme} : jusqu'où iras-tu ?`,(n,t)=>`Le jour où ${n} a failli tout perdre`,(n,t)=>`Ce que ${t.theme.toLowerCase()} m'a appris sur moi-même`,(n,t)=>`${n} : le choix qui change tout`,(n,t)=>`${t.theme} — histoire d'un homme face à lui-même`],
+    mg:[(n,t)=>`${n} sy ny ${t.theme} : hatraiza no hankanesanao ?`,(n,t)=>`Ny andro saiky namely an'i ${n}`,(n,t)=>`Izay nampianarin'ny ${t.theme.toLowerCase()} ahy momba ny tenako`,(n,t)=>`${n} : ny safidy mampiova ny zavatra rehetra`,(n,t)=>`${t.theme} — tantaran'ny lehilahy miatrika ny tenany`],
+    en:[(n,t)=>`${n} vs ${t.theme}: How far will you go?`,(n,t)=>`The day ${n} almost lost everything`,(n,t)=>`What ${t.theme.toLowerCase()} taught me about myself`,(n,t)=>`${n}: the choice that changes everything`,(n,t)=>`${t.theme} — one man's face-off with himself`]
   }
 };
 
-// ============================================================
-// MOTEUR PRINCIPAL
-// ============================================================
+function pick(arr) { return arr[Math.floor(Math.random()*arr.length)]; }
+function pickName(g) { return pick(g==='f'?DB.names.female:DB.names.male); }
+function detectTheme(idea) { const l=idea.toLowerCase(); for(const[k,v]of Object.entries(DB.themeMap)){if(l.includes(k))return v;} return DB.themeMap.default; }
 
-function pick(arr) { return arr[Math.floor(Math.random() * arr.length)]; }
+function setLang(el,lang) { document.querySelectorAll('.lang-pill').forEach(p=>p.classList.remove('on')); el.classList.add('on'); currentLang=lang; }
+function useEx(el) { document.getElementById('eng-idea').value=el.textContent; }
 
-function detectTheme(idea) {
-  const lower = idea.toLowerCase();
-  for (const [key, val] of Object.entries(DB.themeMap)) {
-    if (lower.includes(key)) return val;
-  }
-  return DB.themeMap.default;
-}
-
-function pickName(gender) {
-  return pick(gender === 'f' ? DB.names.female : DB.names.male);
-}
-
-function buildPersonages(idea) {
-  const archetypes = [...DB.archetypes];
-  const shuffle = archetypes.sort(() => Math.random() - 0.5);
-  const roles = ['main','friend','mentor','villain'];
-  const picks = shuffle.slice(0,4);
-  const genders = [Math.random()>0.4?'m':'f', Math.random()>0.5?'m':'f', Math.random()>0.7?'m':'f', 'm'];
-  const persons = {};
-  picks.forEach((a, i) => {
-    const g = genders[i];
-    const name = pickName(g);
-    const lang = currentLang;
-    persons[roles[i]] = {
-      name, role: a.role, traits: a.traits, emoji: a.emoji,
-      story: a.stories[lang] ? a.stories[lang](name, idea) : a.stories.fr(name, idea),
-      archetype: a
-    };
+function buildPersons(idea) {
+  const archs=[...DB.archetypes].sort(()=>Math.random()-0.5);
+  const roles=['main','friend','mentor','villain'];
+  const persons={};
+  archs.slice(0,4).forEach((a,i)=>{
+    const g=Math.random()>0.45?'m':'f';
+    const name=pickName(g);
+    const lang=currentLang;
+    persons[roles[i]]={ name, role:a.role, traits:a.traits, emoji:a.emoji, story:(a.stories[lang]||a.stories.fr)(name), archetype:a };
   });
   return persons;
 }
 
-function buildNarrative(persons, theme) {
-  const lang = currentLang;
-  const nav = DB.narratives[lang] || DB.narratives.fr;
-  return {
-    act1: pick(nav.act1)(persons, theme),
-    act2: pick(nav.act2)(persons, theme),
-    act3: pick(nav.act3)(persons, theme)
-  };
-}
-
-function buildDialogues(persons, theme) {
-  const lang = currentLang;
-  const dt = DB.dialogueTemplates[lang] || DB.dialogueTemplates.fr;
-  return {
-    dilemme: pick(dt.dilemme)(persons, theme),
-    revelation: pick(dt.revelation)(persons, theme)
-  };
-}
-
-function buildTitles(persons, theme) {
-  const mainName = persons.main.name;
-  const langs = ['fr','mg','en'];
-  const titles = [];
-  langs.forEach(l => {
-    const templates = DB.titleTemplates[l];
-    const picked = pick(templates)(mainName, theme);
-    titles.push({ lang: l.toUpperCase(), text: picked });
-  });
-  // Add a mix title
-  titles.push({ lang: 'MIX', text: `${persons.main.name} : ${theme.theme.toLowerCase()} — tantara iray hampiady anao amin'ny tenanao` });
-  return titles;
-}
-
-function buildCalendar(title) {
-  return DB.calendar.fr(title);
-}
-
-// ============================================================
-// RENDER
-// ============================================================
-
 function generate() {
-  const idea = document.getElementById('idea').value.trim();
-  if (!idea) { document.getElementById('idea').focus(); return; }
-
-  lastIdea = idea;
-  const btn = document.getElementById('gen-btn');
-  btn.disabled = true;
-  btn.innerHTML = '<span>⏳</span> Génération...';
-
-  setTimeout(() => {
-    const theme = detectTheme(idea);
-    const persons = buildPersonages(idea);
-    const narrative = buildNarrative(persons, theme);
-    const dialogues = buildDialogues(persons, theme);
-    const titles = buildTitles(persons, theme);
-    const calendar = buildCalendar(titles[0].text);
-
-    lastResult = { theme, persons, narrative, dialogues, titles, calendar };
-    renderAll(lastResult);
-
-    btn.disabled = false;
-    btn.innerHTML = '<span>⚡</span> Régénérer';
-  }, 400);
+  const idea = document.getElementById('eng-idea').value.trim();
+  if (!idea) { document.getElementById('eng-idea').focus(); return; }
+  const btn = document.getElementById('eng-btn');
+  btn.disabled=true; btn.textContent='⏳ Génération...';
+  setTimeout(()=>{
+    const theme=detectTheme(idea);
+    const persons=buildPersons(idea);
+    const lang=currentLang;
+    const nav=DB.narratives[lang]||DB.narratives.fr;
+    const narrative={ a1:pick(nav.a1)(persons,theme), a2:pick(nav.a2)(persons,theme), a3:pick(nav.a3)(persons,theme) };
+    const dlt=DB.dialogues[lang]||DB.dialogues.fr;
+    const dialogues={ d1:pick(dlt.d1)(persons), d2:pick(dlt.d2)(persons) };
+    const mainName=persons.main.name;
+    const titles=[ ...['fr','mg','en'].map(l=>{ const t=DB.titles[l]; return {lang:l.toUpperCase(),text:pick(t)(mainName,theme)}; }), {lang:'MIX',text:`${mainName} : ${theme.theme.toLowerCase()} — tantara iray hampiady anao amin'ny tenanao`} ];
+    const calendar=[
+      { week:'Semaine 1 — Préparation & Teasing', days:[
+        {day:'Jour 1-2',action:`Écriture et mémorisation du scénario "${titles[0].text}"`,plats:['yt']},
+        {day:'Jour 3',action:'Tournage des scènes. Lumière naturelle, micro-cravate',plats:['yt','fb']},
+        {day:'Jour 4',action:'Montage : CapCut ou DaVinci Resolve. Sous-titres',plats:['yt']},
+        {day:'Jour 5',action:'Teaser 15 sec — scène du dilemme uniquement, sans résolution',plats:['tt','ig','fb']},
+        {day:'Jour 6-7',action:'Story Instagram + Post Facebook : « Quelque chose arrive... 👀 »',plats:['ig','fb']}
+      ]},
+      { week:'Semaine 2 — Lancement & Engagement', days:[
+        {day:'Jour 8 🚀',action:`PUBLICATION : "${titles[0].text}" sur YouTube (vidéo longue)`,plats:['yt']},
+        {day:'Jour 8 soir',action:'Version courte 60 sec sur TikTok + Reels Instagram + Facebook',plats:['tt','ig','fb']},
+        {day:'Jour 9-10',action:'Répondre à TOUS les commentaires. Épingler le meilleur',plats:['yt','fb','tt']},
+        {day:'Jour 11',action:'Post de la leçon de vie en image (citation du scénario)',plats:['ig','fb']},
+        {day:'Jour 12-14',action:'Sondage : quel thème voulez-vous pour le prochain épisode ?',plats:['ig','fb','tt']}
+      ]}
+    ];
+    renderEngine({ theme, persons, narrative, dialogues, titles, calendar });
+    btn.disabled=false; btn.textContent='⚡ Régénérer';
+  },350);
 }
 
-function renderAll(r) {
-  const out = document.getElementById('output');
-  out.innerHTML = '';
-  out.className = 'output visible';
+function renderEngine(r) {
+  const out=document.getElementById('eng-output');
+  out.innerHTML='';
+  const pm={'yt':'YT','tt':'TT','fb':'FB','ig':'IG'};
+  const platCls={'yt':'yt','tt':'tt','fb':'fb','ig':'ig'};
 
-  out.appendChild(makeSection('👤', 'rgba(155,110,250,0.15)', 'Personnages', 'chars', renderChars(r.persons)));
-  out.appendChild(makeSection('🎯', 'rgba(61,204,142,0.15)', 'Thèmes & Leçon de vie', 'themes', renderThemes(r.theme)));
-  out.appendChild(makeSection('📖', 'rgba(232,96,74,0.15)', 'Scénario', 'scenario', renderScenario(r.narrative, r.persons)));
-  out.appendChild(makeSection('💬', 'rgba(74,144,232,0.15)', 'Dialogues', 'dialogues', renderDialogues(r.dialogues)));
-  out.appendChild(makeSection('📢', 'rgba(232,200,74,0.15)', 'Titres accrocheurs', 'titles', renderTitles(r.titles)));
-  out.appendChild(makeSection('📅', 'rgba(61,204,142,0.12)', 'Plan de publication', 'calendar', renderCalendar(r.calendar)));
+  function sec(icon,iconBg,title,id,html) {
+    const d=document.createElement('div'); d.className='res-section'; d.id='rsec-'+id;
+    d.innerHTML=`<div class="res-header"><div class="res-icon" style="background:${iconBg}">${icon}</div><div class="res-title">${title}</div><button class="copy-btn" onclick="copyResSection('${id}')">Copier</button></div><div class="res-body" id="rbody-${id}">${html}</div>`;
+    return d;
+  }
 
-  // Export bar
-  const exp = document.createElement('div');
-  exp.className = 'export-bar';
-  exp.innerHTML = `
-    <button class="exp-btn primary" onclick="exportAll()">📋 Tout copier</button>
-    <button class="exp-btn" onclick="generate()">⚡ Régénérer</button>
-    <button class="exp-btn" onclick="exportTxt()">💾 Exporter .txt</button>
-  `;
+  // 1. Chars
+  const charsHtml=`<div class="chars-grid">${Object.values(r.persons).map(p=>`<div class="char-item"><div class="char-name">${p.emoji} ${p.name}</div><div class="char-role">${p.role}</div><div class="char-traits">${p.traits.map(t=>`<span class="trait">${t}</span>`).join('')}</div><div class="char-story">${p.story}</div></div>`).join('')}</div>`;
+  out.appendChild(sec('👤','var(--purple-l)','Personnages','chars',charsHtml));
+
+  // 2. Themes
+  const themesHtml=`<div><div class="theme-item"><div class="theme-num">01</div><div><div class="theme-text"><strong>${r.theme.theme}</strong></div><div class="theme-sub">Thème central de l'épisode</div></div></div><div class="theme-item"><div class="theme-num">02</div><div><div class="theme-text">${r.theme.lesson}</div><div class="theme-sub">Leçon de vie à transmettre</div></div></div></div><div class="lecon-box"><div class="lecon-quote">${r.theme.citation}</div></div>`;
+  out.appendChild(sec('🎯','var(--teal-l)','Thèmes & Leçon de vie','themes',themesHtml));
+
+  // 3. Scenario
+  const scenHtml=`<div class="act a1"><div class="act-label">Acte 1 — Introduction</div><div class="act-text">${r.narrative.a1}</div></div><div class="act a2"><div class="act-label">Acte 2 — Conflit & Dilemme</div><div class="act-text">${r.narrative.a2}</div></div><div class="act a3"><div class="act-label">Acte 3 — Résolution & Leçon</div><div class="act-text">${r.narrative.a3}</div></div>`;
+  out.appendChild(sec('📖','var(--coral-l)','Scénario','scenario',scenHtml));
+
+  // 4. Dialogues
+  function dlines(lines){return lines.map(l=>`<div class="dline"><div class="dname ${l.c}">${l.s}</div><div class="dtext ${l.c==='narr'?'narr':''}">${l.t}</div></div>`).join('');}
+  const dlgHtml=`<div class="dialogue-block"><div class="dialogue-label">Dialogue 1 — La scène du dilemme</div>${dlines(r.dialogues.d1)}</div><div class="dialogue-block"><div class="dialogue-label">Dialogue 2 — La révélation</div>${dlines(r.dialogues.d2)}</div>`;
+  out.appendChild(sec('💬','rgba(74,144,232,0.1)','Dialogues','dialogues',dlgHtml));
+
+  // 5. Titres
+  const titlesHtml=`<div class="titles-list">${r.titles.map(t=>`<div class="title-item"><div class="title-lang">${t.lang}</div><div class="title-text">${t.text}</div><button class="title-copy" onclick="navigator.clipboard.writeText('${t.text.replace(/'/g,"\\'")}');toast('Titre copié ✓')">📋</button></div>`).join('')}</div>`;
+  out.appendChild(sec('📢','var(--amber-l)','Titres accrocheurs','titles',titlesHtml));
+
+  // 6. Calendar
+  const calHtml=r.calendar.map(w=>`<div class="cal-week"><div class="cal-week-title">${w.week}</div>${w.days.map(d=>`<div class="cal-day"><div class="cal-day-num">${d.day}</div><div class="cal-day-content">${d.action}<div class="cal-platforms">${d.plats.map(p=>`<span class="cal-plat ${platCls[p]}">${pm[p]}</span>`).join('')}</div></div></div>`).join('')}</div>`).join('');
+  out.appendChild(sec('📅','var(--teal-l)','Plan de publication','calendar',calHtml));
+
+  // Export
+  const exp=document.createElement('div'); exp.className='export-bar';
+  exp.innerHTML=`<button class="exp-btn primary" onclick="exportAll()">📋 Tout copier</button><button class="exp-btn" onclick="generate()">⚡ Régénérer</button><button class="exp-btn" onclick="exportTxt()">💾 Exporter .txt</button>`;
   out.appendChild(exp);
-
-  out.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  out.scrollIntoView({behavior:'smooth',block:'start'});
 }
 
-function makeSection(icon, iconBg, title, id, content) {
-  const sec = document.createElement('div');
-  sec.className = 'section';
-  sec.id = 'sec-' + id;
-  sec.innerHTML = `
-    <div class="section-header">
-      <div class="section-icon" style="background:${iconBg}">${icon}</div>
-      <div class="section-title">${title}</div>
-      <button class="copy-btn" onclick="copySection('${id}')">Copier</button>
-    </div>
-    <div class="section-body" id="body-${id}"></div>
-  `;
-  sec.querySelector('#body-' + id).appendChild(content);
-  return sec;
-}
-
-function renderChars(persons) {
-  const div = document.createElement('div');
-  div.className = 'chars-grid';
-  Object.values(persons).forEach(p => {
-    const item = document.createElement('div');
-    item.className = 'char-item';
-    item.innerHTML = `
-      <div class="char-name">${p.emoji} ${p.name}</div>
-      <div class="char-role">${p.role}</div>
-      <div class="char-traits">${p.traits.map(t=>`<span class="trait">${t}</span>`).join('')}</div>
-      <div class="char-story">${p.story}</div>
-    `;
-    div.appendChild(item);
-  });
-  return div;
-}
-
-function renderThemes(theme) {
-  const div = document.createElement('div');
-  div.innerHTML = `
-    <div class="themes-list">
-      <div class="theme-item">
-        <div class="theme-num">01</div>
-        <div><div class="theme-text"><strong>${theme.theme}</strong></div><div class="theme-sub">Thème central de l'épisode</div></div>
-      </div>
-      <div class="theme-item">
-        <div class="theme-num">02</div>
-        <div><div class="theme-text">${theme.lesson}</div><div class="theme-sub">Leçon de vie à transmettre</div></div>
-      </div>
-    </div>
-    <div class="lecon-box" style="margin-top:1rem">
-      <div class="lecon-quote">${theme.citation}</div>
-    </div>
-  `;
-  return div;
-}
-
-function renderScenario(narrative, persons) {
-  const div = document.createElement('div');
-  div.innerHTML = `
-    <div class="acts">
-      <div class="act a1">
-        <div class="act-label">Acte 1 — Introduction</div>
-        <div class="act-text">${narrative.act1}</div>
-      </div>
-      <div class="act a2">
-        <div class="act-label">Acte 2 — Conflit & Dilemme</div>
-        <div class="act-text">${narrative.act2}</div>
-      </div>
-      <div class="act a3">
-        <div class="act-label">Acte 3 — Résolution & Leçon</div>
-        <div class="act-text">${narrative.act3}</div>
-      </div>
-    </div>
-  `;
-  return div;
-}
-
-function renderDialogues(dialogues) {
-  const div = document.createElement('div');
-
-  const makeDialogue = (title, lines) => {
-    let html = `<div class="dialogue-block"><div class="dialogue-title">${title}</div>`;
-    lines.forEach(l => {
-      html += `<div class="line">
-        <div class="line-name ${l.cls}">${l.speaker}</div>
-        <div class="line-text ${l.cls === 'narr' ? 'narr' : ''}">${l.text}</div>
-      </div>`;
-    });
-    html += '</div>';
-    return html;
-  };
-
-  div.innerHTML =
-    makeDialogue('Dialogue 1 — La scène du dilemme', dialogues.dilemme) +
-    makeDialogue('Dialogue 2 — La révélation', dialogues.revelation);
-  return div;
-}
-
-function renderTitles(titles) {
-  const div = document.createElement('div');
-  div.className = 'titles-list';
-  titles.forEach(t => {
-    const item = document.createElement('div');
-    item.className = 'title-item';
-    item.innerHTML = `
-      <div class="title-lang">${t.lang}</div>
-      <div class="title-text">${t.text}</div>
-      <button class="title-copy" onclick="copySingle('${t.text.replace(/'/g,"\\'")}')">📋</button>
-    `;
-    div.appendChild(item);
-  });
-  return div;
-}
-
-function renderCalendar(calendar) {
-  const div = document.createElement('div');
-  const platMap = { yt:'YT', tt:'TT', fb:'FB', ig:'IG' };
-  calendar.forEach(week => {
-    let html = `<div class="cal-week"><div class="cal-week-title">${week.week}</div>`;
-    week.days.forEach(d => {
-      html += `<div class="cal-day">
-        <div class="cal-day-num">${d.day}</div>
-        <div class="cal-day-content">
-          ${d.action}
-          <div class="cal-platforms">${d.platforms.map(p=>`<span class="cal-plat ${p}">${platMap[p]}</span>`).join('')}</div>
-        </div>
-      </div>`;
-    });
-    html += '</div>';
-    div.innerHTML += html;
-  });
-  return div;
-}
-
-// ============================================================
-// COPY & EXPORT
-// ============================================================
-
-function copySection(id) {
-  const el = document.getElementById('body-' + id);
-  if (!el) return;
+function copyResSection(id) {
+  const el=document.getElementById('rbody-'+id);
+  if(!el) return;
   navigator.clipboard.writeText(el.innerText);
-  const btn = document.querySelector(`#sec-${id} .copy-btn`);
-  if (btn) { btn.textContent = '✓ Copié'; btn.className = 'copy-btn copied'; setTimeout(() => { btn.textContent = 'Copier'; btn.className = 'copy-btn'; }, 2000); }
+  const btn=document.querySelector(`#rsec-${id} .copy-btn`);
+  if(btn){ btn.textContent='✓ Copié'; btn.className='copy-btn done'; setTimeout(()=>{ btn.textContent='Copier'; btn.className='copy-btn'; },2000); }
   toast('Section copiée ✓');
 }
 
-function copySingle(text) {
-  navigator.clipboard.writeText(text);
-  toast('Titre copié ✓');
-}
-
 function exportAll() {
-  if (!lastResult) return;
-  const r = lastResult;
-  let text = `ART'FAN STUDIO — GÉNÉRATION NARRATIVE\n${'='.repeat(40)}\n\n`;
-  text += `THÈME: ${r.theme.theme}\nLEÇON: ${r.theme.lesson}\nCITATION: ${r.theme.citation}\n\n`;
-  text += `PERSONNAGES:\n`;
-  Object.values(r.persons).forEach(p => { text += `• ${p.name} (${p.role}) — ${p.traits.join(', ')}\n  ${p.story}\n`; });
-  text += `\nSCÉNARIO:\nACTE 1: ${r.narrative.act1}\nACTE 2: ${r.narrative.act2}\nACTE 3: ${r.narrative.act3}\n\n`;
-  text += `DIALOGUES:\n`;
-  [...r.dialogues.dilemme, ...r.dialogues.revelation].forEach(l => { text += `${l.speaker}: ${l.text}\n`; });
-  text += `\nTITRES:\n`;
-  r.titles.forEach(t => { text += `[${t.lang}] ${t.text}\n`; });
+  const sections=['chars','themes','scenario','dialogues','titles','calendar'];
+  let text='ART\'FAN STUDIO\n'+'='.repeat(40)+'\n\n';
+  sections.forEach(id=>{ const el=document.getElementById('rbody-'+id); if(el) text+=el.innerText+'\n\n---\n\n'; });
   navigator.clipboard.writeText(text);
-  toast('Tout copié dans le presse-papier ✓');
+  toast('Tout copié ✓');
 }
 
 function exportTxt() {
-  if (!lastResult) return;
-  const r = lastResult;
-  let text = `ART'FAN STUDIO — ${r.titles[0]?.text || 'HISTOIRE'}\n${'='.repeat(50)}\n\n`;
-  text += `THÈME: ${r.theme.theme}\nLEÇON: ${r.theme.lesson}\n\n`;
-  text += `--- PERSONNAGES ---\n`;
-  Object.values(r.persons).forEach(p => { text += `${p.name} (${p.role})\nTraits: ${p.traits.join(', ')}\n${p.story}\n\n`; });
-  text += `--- SCÉNARIO ---\nACTE 1 — INTRODUCTION\n${r.narrative.act1}\n\nACTE 2 — CONFLIT\n${r.narrative.act2}\n\nACTE 3 — RÉSOLUTION\n${r.narrative.act3}\n\n`;
-  text += `--- DIALOGUES ---\n`;
-  text += `SCÈNE DU DILEMME:\n`;
-  r.dialogues.dilemme.forEach(l => { text += `${l.speaker}: ${l.text}\n`; });
-  text += `\nSCÈNE DE LA RÉVÉLATION:\n`;
-  r.dialogues.revelation.forEach(l => { text += `${l.speaker}: ${l.text}\n`; });
-  text += `\n--- TITRES ---\n`;
-  r.titles.forEach(t => { text += `[${t.lang}] ${t.text}\n`; });
-
-  const blob = new Blob([text], { type: 'text/plain;charset=utf-8' });
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement('a');
-  a.href = url; a.download = 'artfan-histoire.txt';
-  document.body.appendChild(a); a.click();
-  document.body.removeChild(a); URL.revokeObjectURL(url);
+  const sections=['chars','themes','scenario','dialogues','titles','calendar'];
+  let text='ART\'FAN STUDIO\n'+'='.repeat(40)+'\n\n';
+  sections.forEach(id=>{ const el=document.getElementById('rbody-'+id); if(el) text+=el.innerText+'\n\n---\n\n'; });
+  const blob=new Blob([text],{type:'text/plain;charset=utf-8'});
+  const url=URL.createObjectURL(blob);
+  const a=document.createElement('a'); a.href=url; a.download='artfan-histoire.txt';
+  document.body.appendChild(a); a.click(); document.body.removeChild(a); URL.revokeObjectURL(url);
   toast('Fichier téléchargé ✓');
 }
 
-function toast(msg) {
-  document.getElementById('toast-msg').textContent = msg;
-  const t = document.getElementById('toast');
-  t.classList.add('show');
-  setTimeout(() => t.classList.remove('show'), 2500);
+// ============== AIDE PONCTUELLE ==============
+const HELP = {
+  names: { title:'Générateur de noms', render:()=>`<div><p style="font-size:13.5px;color:var(--text2);margin-bottom:1rem">Cliquez pour générer des noms malgaches avec leur signification.</p><div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:1rem"><button class="btn btn-primary" onclick="genNames('m')">Noms masculins</button><button class="btn btn-ghost" onclick="genNames('f')">Noms féminins</button><button class="btn btn-ghost" onclick="genNames('all')">Tous</button></div><div id="names-out"></div></div>` },
+  traits: { title:'Combinateur de traits', render:()=>`<div><p style="font-size:13.5px;color:var(--text2);margin-bottom:1rem">Choisissez un archétype pour voir ses traits caractéristiques.</p><select onchange="showTraits(this.value)" style="margin-bottom:1rem"><option value="">Sélectionner un archétype</option>${DB.archetypes.map(a=>`<option value="${a.role}">${a.emoji} ${a.role}</option>`).join('')}</select><div id="traits-out"></div></div>` },
+  titles: { title:'Formules de titres', render:()=>`<div><p style="font-size:13.5px;color:var(--text2);margin-bottom:1rem">Entrez un nom et un thème pour générer des formules de titres.</p><div class="grid-2"><div><label>Nom du personnage</label><input type="text" id="t-name" placeholder="Rakoto..."></div><div><label>Thème</label><input type="text" id="t-theme-in" placeholder="la trahison..."></div></div><button class="btn btn-primary mt-2" onclick="genTitles()">Générer les titres</button><div id="titles-out" style="margin-top:1rem"></div></div>` },
+  hooks: { title:"Accroches d'intro vidéo", render:()=>`<div><p style="font-size:13.5px;color:var(--text2);margin-bottom:1rem">Formules d'accroches pour capter l'attention dès les 3 premières secondes.</p><div id="hooks-out">${renderHooks()}</div></div>` },
+  lessons: { title:'Banque de leçons de vie', render:()=>`<div><p style="font-size:13.5px;color:var(--text2);margin-bottom:1rem">Toutes les leçons de vie et citations disponibles dans le moteur.</p><div id="lessons-out">${Object.values(DB.themeMap).map(t=>`<div style="margin-bottom:12px;padding:12px 14px;background:var(--bg3);border-radius:8px;border-left:3px solid var(--accent)"><div style="font-size:13px;font-weight:600;color:var(--text);margin-bottom:4px">${t.theme}</div><div style="font-size:13px;color:var(--text2);margin-bottom:6px">${t.lesson}</div><div class="lecon-box" style="padding:8px 12px"><div class="lecon-quote" style="font-size:13px">${t.citation}</div></div></div>`).join('')}</div></div>` }
+};
+
+function renderHelpTool() {
+  const type=document.getElementById('help-type').value;
+  const h=HELP[type];
+  const out=document.getElementById('help-output');
+  out.innerHTML=`<div class="card-title"><div class="card-icon" style="background:var(--purple-l)">🛠️</div>${h.title}</div>${h.render()}`;
 }
 
-// ENTER key
-document.getElementById('idea').addEventListener('keydown', e => {
-  if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); generate(); }
-});
+function genNames(gender) {
+  const out=document.getElementById('names-out');
+  const list=gender==='all'?[...DB.names.male,...DB.names.female]:DB.names[gender==='m'?'male':'female'];
+  out.innerHTML=`<div style="display:flex;flex-wrap:wrap;gap:7px">${list.map(n=>`<button class="exp-btn" onclick="navigator.clipboard.writeText('${n}');toast('${n} copié ✓')" style="font-family:'Syne',sans-serif;font-weight:700">${n}</button>`).join('')}</div>`;
+}
+
+function showTraits(role) {
+  const out=document.getElementById('traits-out');
+  if(!role){out.innerHTML='';return;}
+  const arch=DB.archetypes.find(a=>a.role===role);
+  if(!arch){out.innerHTML='';return;}
+  out.innerHTML=`<div style="background:var(--bg3);border-radius:8px;padding:12px 14px"><div style="font-size:22px;margin-bottom:6px">${arch.emoji}</div><div class="char-traits">${arch.traits.map(t=>`<span class="trait">${t}</span>`).join('')}</div><div style="font-size:13px;color:var(--text2);margin-top:8px;font-style:italic">${arch.stories.fr('(personnage)')}</div></div>`;
+}
+
+function genTitles() {
+  const name=document.getElementById('t-name').value.trim()||'Rakoto';
+  const themeText=document.getElementById('t-theme-in').value.trim()||'le dilemme';
+  const fakeTheme={theme:themeText,lesson:'',citation:''};
+  const out=document.getElementById('titles-out');
+  out.innerHTML=`<div class="titles-list">${['fr','mg','en'].flatMap(l=>DB.titles[l].map(fn=>({lang:l.toUpperCase(),text:fn(name,fakeTheme)}))).map(t=>`<div class="title-item"><div class="title-lang">${t.lang}</div><div class="title-text">${t.text}</div><button class="title-copy" onclick="navigator.clipboard.writeText('${t.text.replace(/'/g,"\\'")}');toast('Copié ✓')">📋</button></div>`).join('')}</div>`;
+}
+
+function renderHooks() {
+  const hooks=[
+    {lang:'FR',text:'« Tu connais quelqu\'un qui a tout sacrifié pour de l\'argent... et l\'a regretté ? Cette histoire, c\'est la sienne. »'},
+    {lang:'FR',text:'« Dans 3 minutes, tu vas devoir choisir : tu aurais fait quoi à sa place ? »'},
+    {lang:'MG',text:'« Efa nisy ianao nahita olona nahavita zavatra tsy mety — ka nanenina? Ity tantara ity, ny tantarany izy. »'},
+    {lang:'MG',text:'« Afaka 3 minitra, hisy safidy sarotra — inona no ho nataonao ? »'},
+    {lang:'EN',text:'"Have you ever watched someone throw everything away for one bad choice? This is that story."'},
+    {lang:'MIX',text:'« Afaka 3 minitra — tu vas devoir choisir. Inona no ho nataonao ? »'}
+  ];
+  return `<div class="titles-list">${hooks.map(h=>`<div class="title-item"><div class="title-lang">${h.lang}</div><div class="title-text" style="font-style:italic">${h.text}</div><button class="title-copy" onclick="navigator.clipboard.writeText(this.closest('.title-item').querySelector('.title-text').textContent);toast('Accroche copiée ✓')">📋</button></div>`).join('')}</div>`;
+}
+
+document.getElementById('eng-idea').addEventListener('keydown',e=>{ if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();generate();} });
+refreshDash();
+renderHelpTool();
 </script>
 </body>
 </html>
